@@ -6,6 +6,9 @@
 
 3. [opencv cv::filter2D example 2](https://www.programcreek.com/python/example/89373/cv2.filter2D)
 
+4. [opencv cv2.medianBlur documentation](https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html)
+
+5. [opencv cv2.medianBlur example 1](https://medium.com/@florestony5454/median-filtering-with-python-and-opencv-2bce390be0d1)
 
 ## Problem solving queries
 
@@ -15,5 +18,5 @@
 
 3. [opencv cv::imshow doc](https://docs.opencv.org/3.0-beta/modules/highgui/doc/user_interface.html#imshow)
 
-
+4. [cv2.medianBlur argument type requirement](https://stackoverflow.com/questions/48453576/opencv-error-unsupported-format-or-combination-of-formats-unsupported-combinat/48453577)
 

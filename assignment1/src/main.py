@@ -135,20 +135,72 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # compute the squared differences between the original and the demosaic
     squared_diff = get_squared_differences(original, demosaic)
 
+    ###### present the concatenated images #####
     # important for cv2.imshow!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
     demosaic = demosaic.astype(np.uint8)
     squared_diff = squared_diff.astype(np.uint8)
 
-    # concatenate the 3 images horizontally
-    concat = np.hstack((original, demosaic, squared_diff))
+    # concatenate the 3 images horizontally (side by side)
+    concat = np.concatenate((original, demosaic, squared_diff), axis=1)
 
-    cv2.imshow(winname='part 1 output', mat=concat)
+    cv2.imshow(winname='Part 1 output', mat=concat)
     # cv2.imshow('original', original)
     # cv2.imshow('demosaic', demosaic)
     # cv2.imshow('squared difference', squared_diff)
-    cv2.waitKey(0)
+
+
+def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
+    """
+    apply the improved interpolation approach
+
+    :param original:                JPG image (shape of (height, width, no. of channels))
+    :param demosaic_blue_channel:   demosaic blue channel
+    :param demosaic_green_channel:  demosaic green channel
+    :param demosaic_red_channel:    demosaic red channel
+    """
+    ###### simple bilinear interpolation approach #####
+    # demosaic_red_channel does not change
+
+    # computing the difference images G-R and B-R
+    diff_green_red = demosaic_green_channel - demosaic_red_channel
+    diff_blue_red = demosaic_blue_channel - demosaic_red_channel
+
+    # important for cv2.medianBlur!!
+    # input array passed to cv2.medianBlur must be converted to int8 or
+    # float32
+    # print(diff_green_red.dtype)  # so far it is float64
+    # print(diff_blue_red.dtype)   # so far it is float64
+    diff_green_red = diff_green_red.astype('float32')
+    diff_blue_red = diff_blue_red.astype('float32')
+
+    # applying median filtering to the images G-R and B-R
+    median_green_red = cv2.medianBlur(src=diff_green_red, ksize=5)
+    median_blue_red = cv2.medianBlur(src=diff_blue_red, ksize=5)
+
+    # modify the G and B channels by adding the R channel to the respective
+    # difference images
+    modified_green = demosaic_red_channel + median_green_red
+    modified_blue = demosaic_red_channel + median_blue_red
+
+    # stack new B/G/R channels together
+    improved_demosaic = np.dstack((modified_blue, modified_green, demosaic_red_channel))
+
+    # compute the squared differences between the original and the improved_demosaic
+    squared_diff = get_squared_differences(original, improved_demosaic)
+
+    ###### present the concatenated images #####
+    # important for cv2.imshow!!
+    # convert to unsigned int8 type so that the cv2.imshow will show using
+    # range [0, 255] instead of [0, 1]
+    improved_demosaic = improved_demosaic.astype(np.uint8)
+    squared_diff = squared_diff.astype(np.uint8)
+
+    # concatenate the 3 images horizontally (side by side)
+    concat = np.concatenate((original, improved_demosaic, squared_diff), axis=1)
+
+    cv2.imshow(winname='Part 2 output', mat=concat)
 
 
 def main():
@@ -157,16 +209,6 @@ def main():
     """
     # read the images
     original, bayer = read_images()
-
-    # debug: showing the 2 images
-    # cv2.imshow('original', original)
-    # cv2.imshow('bayer', bayer)
-    # cv2.waitKey(0)
-
-    # debug: showing the type and shapes
-    # print(type(original))  # <class 'numpy.ndarray'>
-    # print(original.shape)  # (Height, Width, # of Channels)
-    # print(bayer.shape)
 
     # separate channels for bayer image
     blue_channel, green_channel, red_channel = separate_channels(bayer)
@@ -180,10 +222,15 @@ def main():
             blue_channel, green_channel, red_channel,
             blue_kernel, green_kernel, red_kernel)
 
-    # show the concatenated 3 output images in part 1
+    # part 1: show the concatenated 3 output images
     part_one_show(original, demosaic_blue_channel, demosaic_green_channel,
         demosaic_red_channel)
 
+    # part 2: apply the improved approach then show
+    part_two_show(original, demosaic_blue_channel, demosaic_green_channel,
+        demosaic_red_channel)
+
+    cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()
