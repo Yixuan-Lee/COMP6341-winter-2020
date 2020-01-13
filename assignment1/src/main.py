@@ -58,7 +58,10 @@ def separate_channels(bayer_image):
     :return: blue_channel, green_channel, red_channel
     """
     height, width = bayer_image.shape
-    blue_channel, green_channel, red_channel = np.zeros((height, width)), np.zeros((height, width)), np.zeros((height, width))
+    blue_channel, green_channel, red_channel = \
+        np.zeros((height, width), dtype=np.float32), \
+        np.zeros((height, width), dtype=np.float32), \
+        np.zeros((height, width), dtype=np.float32)
 
     # set pixels to corresponding channel
     for row in range(height):
@@ -131,6 +134,10 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     """
     # stack B/G/R channels together
     demosaic = np.dstack((demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel))
+#     print(demosaic.dtype)  # float32
+    # convert the result to 8-bit integer
+    demosaic = cv2.convertScaleAbs(demosaic)
+#     print(demosaic.dtype)  # uint8
 
     # compute the squared differences between the original and the demosaic
     squared_diff = get_squared_differences(original, demosaic)
@@ -138,12 +145,11 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
-    demosaic = demosaic.astype('uint8')
-    squared_diff = squared_diff.astype('uint8')
+#     print(squared_diff.dtype)  # uint8
 
     ###### present the concatenated images using plt.imshow() #####
     # we can change the plot size to make the images bigger
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(16, 10))
 
     # 1st subplot (original)
     plt.subplot(1, 3, 1)
@@ -190,9 +196,6 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # important for cv2.medianBlur!!
     # input array passed to cv2.medianBlur must be converted to int8 or
     # float32
-    demosaic_green_channel = demosaic_green_channel.astype('float32')
-    demosaic_blue_channel = demosaic_blue_channel.astype('float32')
-    demosaic_red_channel = demosaic_red_channel.astype('float32')
 
     # computing the difference images G-R and B-R
     diff_green_red = demosaic_green_channel - demosaic_red_channel
@@ -209,6 +212,10 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     # stack new B/G/R channels together
     improved_demosaic = np.dstack((modified_blue, modified_green, demosaic_red_channel))
+#     print(improved_demosaic.dtype)  # float32
+    # convert the result to 8-bit integer
+    improved_demosaic = cv2.convertScaleAbs(improved_demosaic)
+#     print(improved_demosaic.dtype)  # uint8
 
     # compute the squared differences between the original and the improved_demosaic
     squared_diff = get_squared_differences(original, improved_demosaic)
@@ -216,12 +223,11 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
-    improved_demosaic = improved_demosaic.astype('uint8')
-    squared_diff = squared_diff.astype('uint8')
+#     print('=====', squared_diff.dtype)  # uint8
 
     ###### present the concatenated images using plt.imshow() #####
     # we can change the plot size to make the images bigger
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(16, 10))
 
     # 1st subplot (original)
     plt.subplot(1, 3, 1)
@@ -263,14 +269,28 @@ def main():
     # separate channels for bayer image
     blue_channel, green_channel, red_channel = separate_channels(bayer)
 
+    # trace the dtypes
+#     print(original.dtype)      # uint8
+#     print(original[:, :, 0])
+#     print(bayer.dtype)         # uint8
+#     print(blue_channel.dtype)  # float32
+#     print(blue_channel)
+
     # initialize kernel for each channel
     blue_kernel, green_kernel, red_kernel = get_channel_kernels()
 
+    # trace the dtype
+#     print(blue_kernel)
+#     print(blue_kernel.dtype)  # float32
+
     # demosaicing
     demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel = \
-        get_demosaic_channels(
-            blue_channel, green_channel, red_channel,
-            blue_kernel, green_kernel, red_kernel)
+        get_demosaic_channels(blue_channel, green_channel, red_channel,
+                                blue_kernel, green_kernel, red_kernel)
+
+    # trace the dtype
+#     print(demosaic_blue_channel)
+#     print(demosaic_blue_channel.dtype)  # float32
 
     # part 1: show the concatenated 3 output images
     part_one_show(original, demosaic_blue_channel, demosaic_green_channel,
@@ -282,5 +302,7 @@ def main():
 
     cv2.waitKey(0)
 
+
 if __name__ == '__main__':
     main()
+
