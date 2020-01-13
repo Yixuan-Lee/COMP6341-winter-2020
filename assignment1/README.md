@@ -21,3 +21,5 @@
 4. [cv2.medianBlur argument type requirement](https://stackoverflow.com/questions/48453576/opencv-error-unsupported-format-or-combination-of-formats-unsupported-combinat/48453577)
 
 5. [Stack overflow: Difference between plt.show and cv2.imshow](https://stackoverflow.com/questions/38598118/difference-between-plt-show-and-cv2-imshow)
+
+6. [cv2.convertScaleAbs](https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#convertscaleabs)
