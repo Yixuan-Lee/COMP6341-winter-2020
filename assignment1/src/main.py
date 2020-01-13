@@ -135,20 +135,44 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # compute the squared differences between the original and the demosaic
     squared_diff = get_squared_differences(original, demosaic)
 
-    ###### present the concatenated images #####
-    # important for cv2.imshow!!
+    # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
     demosaic = demosaic.astype('uint8')
     squared_diff = squared_diff.astype('uint8')
 
-    # concatenate the 3 images horizontally (side by side)
-    concat = np.concatenate((original, demosaic, squared_diff), axis=1)
+    ###### present the concatenated images using plt.imshow() #####
+    # we can change the plot size to make the images bigger
+    plt.figure(figsize=(12, 10))
 
-    cv2.imshow(winname='Part 1 output', mat=concat)
-    # cv2.imshow('original', original)
-    # cv2.imshow('demosaic', demosaic)
-    # cv2.imshow('squared difference', squared_diff)
+    # 1st subplot (original)
+    plt.subplot(1, 3, 1)
+    plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
+    plt.title('Original Image')
+    plt.xticks([])
+    plt.yticks([])
+
+    # 2nd subplot (demosaic)
+    plt.subplot(1, 3, 2)
+    plt.imshow(cv2.cvtColor(demosaic, cv2.COLOR_BGR2RGB))
+    plt.title('Demosaic Image')
+    plt.xticks([])
+    plt.yticks([])
+
+    # 3rd subplot (squared differences)
+    plt.subplot(1, 3, 3)
+    plt.imshow(cv2.cvtColor(squared_diff, cv2.COLOR_BGR2RGB))
+    plt.title('Squared Differences')
+    plt.xticks([])
+    plt.yticks([])
+
+    plt.show()
+
+    ###### present the concatenated images using cv2.imshow #####
+    # concatenate the 3 images horizontally (side by side)
+#     concat = np.concatenate((original, demosaic, squared_diff), axis=1)
+#
+#     cv2.imshow(winname='Part 1 output', mat=concat)
 
 
 def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
@@ -175,8 +199,8 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     diff_blue_red = demosaic_blue_channel - demosaic_red_channel
 
     # applying median filtering to the images G-R and B-R
-    median_green_red = cv2.medianBlur(src=diff_green_red, ksize=5)
-    median_blue_red = cv2.medianBlur(src=diff_blue_red, ksize=5)
+    median_green_red = cv2.medianBlur(src=diff_green_red, ksize=3)
+    median_blue_red = cv2.medianBlur(src=diff_blue_red, ksize=3)
 
     # modify the G and B channels by adding the R channel to the respective
     # difference images
@@ -189,17 +213,44 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # compute the squared differences between the original and the improved_demosaic
     squared_diff = get_squared_differences(original, improved_demosaic)
 
-    ###### present the concatenated images #####
-    # important for cv2.imshow!!
+    # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
     improved_demosaic = improved_demosaic.astype('uint8')
     squared_diff = squared_diff.astype('uint8')
 
-    # concatenate the 3 images horizontally (side by side)
-    concat = np.concatenate((original, improved_demosaic, squared_diff), axis=1)
+    ###### present the concatenated images using plt.imshow() #####
+    # we can change the plot size to make the images bigger
+    plt.figure(figsize=(12, 10))
 
-    cv2.imshow(winname='Part 2 output', mat=concat)
+    # 1st subplot (original)
+    plt.subplot(1, 3, 1)
+    plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
+    plt.title('Original Image')
+    plt.xticks([])
+    plt.yticks([])
+
+    # 2nd subplot (improved demosaic)
+    plt.subplot(1, 3, 2)
+    plt.imshow(cv2.cvtColor(improved_demosaic, cv2.COLOR_BGR2RGB))
+    plt.title('Improved Demosaic Image')
+    plt.xticks([])
+    plt.yticks([])
+
+    # 3rd subplot (squared differences)
+    plt.subplot(1, 3, 3)
+    plt.imshow(cv2.cvtColor(squared_diff, cv2.COLOR_BGR2RGB))
+    plt.title('Squared Differences')
+    plt.xticks([])
+    plt.yticks([])
+
+    plt.show()
+
+    ###### present the concatenated images using cv2.imshow #####
+    # concatenate the 3 images horizontally (side by side)
+#     concat = np.concatenate((original, improved_demosaic, squared_diff), axis=1)
+#
+#     cv2.imshow(winname='Part 2 output', mat=concat)
 
 
 def main():
