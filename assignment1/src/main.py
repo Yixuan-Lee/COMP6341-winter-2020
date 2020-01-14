@@ -120,7 +120,11 @@ def get_squared_differences(original, demosaic):
     :param demosaic: demosaic image from BMP image
     :return: squared differences of two images
     """
-    return np.square(original - demosaic)
+    # return np.square(original - demosaic)
+    diff = np.sqrt(np.absolute(np.square(original) - np.square(demosaic)))
+    diff = diff.astype(dtype='uint8')
+#     print(diff)
+    return diff
 
 
 def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
@@ -223,7 +227,7 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
-#     print('=====', squared_diff.dtype)  # uint8
+#     print(squared_diff.dtype)  # uint8
 
     ###### present the concatenated images using plt.imshow() #####
     # we can change the plot size to make the images bigger
