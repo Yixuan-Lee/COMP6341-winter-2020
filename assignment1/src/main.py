@@ -32,7 +32,7 @@ def read_images():
                 raise ValueError
 
         except ValueError:
-            # IndexOutofBound of TypeError
+            # IndexOutOfBound of TypeError
             print('Message: image_index should be input as an integer '
                   'between 0 and', len(bmp_images))
             image_index = -1
@@ -112,19 +112,20 @@ def get_demosaic_channels(blue_channel, green_channel, red_channel, blue_kernel,
     return demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel
 
 
-def get_squared_differences(original, demosaic):
+def get_root_squared_differences(original, demosaic):
     """
-    compute the squared differences between original and demosaic over 3 color channels
+    compute the root squared differences between original and demosaic over 3 color channels
 
-    :param original: original image from JPG image
-    :param demosaic: demosaic image from BMP image
-    :return: squared differences of two images
+    :param original: original image from JPG image (height, width, 3)
+    :param demosaic: demosaic image from BMP image (height, width, 3)
+    :return: summed root squared differences of two images (height, width, 1)
     """
-    # return np.square(original - demosaic)
-    diff = np.sqrt(np.absolute(np.square(original) - np.square(demosaic)))
-    diff = diff.astype(dtype='uint8')
-#     print(diff)
-    return diff
+    # diff_float64 = np.sum(np.square(original - demosaic), axis=2)
+    diff_float64 = np.sqrt(np.sum(np.square(original - demosaic), axis=2))
+    diff_uint8 = cv2.convertScaleAbs(diff_float64)
+    print(np.max(diff_uint8))
+    return diff_uint8
+    # return np.squcv2.convertScaleAbs(improved_demosaic)are(original - demosaic)
 
 
 def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
@@ -138,18 +139,23 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     """
     # stack B/G/R channels together
     demosaic = np.dstack((demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel))
-#     print(demosaic.dtype)  # float32
+
+    print('5. after combining 3 demosaic channels:')
+    print('demosaic.dtype =', demosaic.dtype)   # float32
+
     # convert the result to 8-bit integer
     demosaic = cv2.convertScaleAbs(demosaic)
-#     print(demosaic.dtype)  # uint8
 
-    # compute the squared differences between the original and the demosaic
-    squared_diff = get_squared_differences(original, demosaic)
+    print('6. after converting to 8-bit integer:')
+    print('demosaic.dtype =', demosaic.dtype)   # uint8
+
+    # compute the root squared differences between the original and the demosaic
+    root_squared_diff = get_root_squared_differences(original, demosaic)
+    print('root_squared_diff.dtype =', root_squared_diff.dtype)     # uint8
 
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
     # range [0, 255] instead of [0, 1]
-#     print(squared_diff.dtype)  # uint8
 
     ###### present the concatenated images using plt.imshow() #####
     # we can change the plot size to make the images bigger
@@ -171,8 +177,8 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     # 3rd subplot (squared differences)
     plt.subplot(1, 3, 3)
-    plt.imshow(cv2.cvtColor(squared_diff, cv2.COLOR_BGR2RGB))
-    plt.title('Squared Differences')
+    plt.imshow(cv2.cvtColor(root_squared_diff, cv2.IMREAD_GRAYSCALE))
+    plt.title('Root Squared Differences')
     plt.xticks([])
     plt.yticks([])
 
@@ -216,13 +222,15 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     # stack new B/G/R channels together
     improved_demosaic = np.dstack((modified_blue, modified_green, demosaic_red_channel))
-#     print(improved_demosaic.dtype)  # float32
+    print('improved_demosaic.dtype =', improved_demosaic.dtype)     # float32
+
     # convert the result to 8-bit integer
     improved_demosaic = cv2.convertScaleAbs(improved_demosaic)
-#     print(improved_demosaic.dtype)  # uint8
+    print('improved_demosaic.dtype =', improved_demosaic.dtype)     # uint8
 
     # compute the squared differences between the original and the improved_demosaic
-    squared_diff = get_squared_differences(original, improved_demosaic)
+    root_squared_diff = get_root_squared_differences(original, improved_demosaic)
+    print('root_squared_diff.dtype =', root_squared_diff.dtype)     # uint8
 
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
@@ -249,8 +257,8 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     # 3rd subplot (squared differences)
     plt.subplot(1, 3, 3)
-    plt.imshow(cv2.cvtColor(squared_diff, cv2.COLOR_BGR2RGB))
-    plt.title('Squared Differences')
+    plt.imshow(cv2.cvtColor(root_squared_diff, cv2.IMREAD_GRAYSCALE))
+    plt.title('Root Squared Differences')
     plt.xticks([])
     plt.yticks([])
 
@@ -270,31 +278,37 @@ def main():
     # read the images
     original, bayer = read_images()
 
+    print('1. after reading images:')
+    print('original.dtype =', original.dtype)
+    print('bayer.dtype =', bayer.dtype)
+
     # separate channels for bayer image
     blue_channel, green_channel, red_channel = separate_channels(bayer)
 
-    # trace the dtypes
-#     print(original.dtype)      # uint8
-#     print(original[:, :, 0])
-#     print(bayer.dtype)         # uint8
-#     print(blue_channel.dtype)  # float32
-#     print(blue_channel)
+    print('2. after separating channels:')
+    print('original.dtype =', original.dtype)
+    print('bayer.dtype =', bayer.dtype)
+    print('blue_channel.dtype =', blue_channel.dtype)
+    print('green_channel.dtype =', green_channel.dtype)
+    print('red_channel.dtype =', red_channel.dtype)
 
     # initialize kernel for each channel
     blue_kernel, green_kernel, red_kernel = get_channel_kernels()
 
-    # trace the dtype
-#     print(blue_kernel)
-#     print(blue_kernel.dtype)  # float32
+    print('3. after initializing the 3 kernels:')
+    print('blue_kernel.dtype =', blue_kernel.dtype)
+    print('green_kernel.dtype =', blue_channel.dtype)
+    print('red_kernel.dtype =', red_kernel.dtype)
 
     # demosaicing
     demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel = \
         get_demosaic_channels(blue_channel, green_channel, red_channel,
                                 blue_kernel, green_kernel, red_kernel)
 
-    # trace the dtype
-#     print(demosaic_blue_channel)
-#     print(demosaic_blue_channel.dtype)  # float32
+    print('4. after applying cv2.filter2D:')
+    print('demosaic_blue_channel.dtype =', demosaic_blue_channel.dtype)
+    print('demosaic_green_channel.dtype =', demosaic_green_channel.dtype)
+    print('demosaic_red_channel.dtype =', demosaic_red_channel.dtype)
 
     # part 1: show the concatenated 3 output images
     part_one_show(original, demosaic_blue_channel, demosaic_green_channel,
