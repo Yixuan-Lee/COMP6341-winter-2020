@@ -19,7 +19,7 @@ jpg_images = (
 
 # debugging identifiers
 dtype_trace = False
-sum_diff = False
+avg_diff = False
 
 # 2 ways to present the images
 matplot_show = True
@@ -131,10 +131,10 @@ def get_root_squared_differences(original, demosaic):
     :return: summed root squared differences of two images (height, width, 1)
     """
     # squared differences
-    # diff_float64 = np.sum(np.square(np.subtract(original, demosaic)), axis=2) / 3.0
+    # diff_float64 = np.sum(np.square(np.subtract(original, demosaic)), axis=2)
 
     # root squared differences
-    diff_float64 = np.sqrt(np.sum(np.square(np.subtract(original, demosaic)), axis=2) / 3.0)
+    diff_float64 = np.sqrt(np.sum(np.square(np.subtract(original, demosaic)), axis=2))
     diff_uint8 = cv2.convertScaleAbs(diff_float64)
     # print(diff_uint8[80:90, 80:90])
     return diff_uint8
@@ -155,6 +155,7 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     if dtype_trace is True:
         print('(part 1) 5. after merging 3 demosaic channels:')
         print('demosaic.dtype =', demosaic.dtype)   # float32
+        print('--------------------------------------')
 
     # convert the result to 8-bit integer
     demosaic = cv2.convertScaleAbs(demosaic)
@@ -162,13 +163,17 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     if dtype_trace is True:
         print('(part 1) 6. after converting to 8-bit integer:')
         print('demosaic.dtype =', demosaic.dtype)       # uint8
+        print('--------------------------------------')
 
     # compute the root squared differences between the original and the demosaic
     root_squared_diff = get_root_squared_differences(original, demosaic)
     if dtype_trace is True:
         print('(part 1) root_squared_diff.dtype =', root_squared_diff.dtype) # uint8
-    if sum_diff is True:
-        print('(part 1) average diff on each pixels: %.5f' % (np.sum(root_squared_diff) / (root_squared_diff.shape[0] * root_squared_diff.shape[1])))
+        print('--------------------------------------')
+    if avg_diff is True:
+        number_of_pixels = root_squared_diff.shape[0] * root_squared_diff.shape[1]
+        print('(part 1) average diff on each pixel: %.5f' % (np.sum(root_squared_diff) / number_of_pixels))
+        print('--------------------------------------')
 
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
@@ -189,7 +194,7 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
         # 2nd subplot (demosaic)
         plt.subplot(1, 3, 2)
         plt.imshow(cv2.cvtColor(demosaic, cv2.COLOR_BGR2RGB))
-        plt.title('Demosaic Image')
+        plt.title('Demosaic Image (Part 1)')
         plt.xticks([])
         plt.yticks([])
 
@@ -204,9 +209,9 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     ###### present the images using cv2.imshow() #####
     if cv2_show is True:
-        cv2.imshow(winname='Part 1 original', mat=original)
-        cv2.imshow(winname='Part 1 demosaic', mat=demosaic)
-        cv2.imshow(winname='Part 1 difference image', mat=root_squared_diff)
+        cv2.imshow(winname='Original Image', mat=original)
+        cv2.imshow(winname='Demosaic Image (Part 1)', mat=demosaic)
+        cv2.imshow(winname='Root Squared Differences (Part 1)', mat=root_squared_diff)
 
 
 def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
@@ -235,27 +240,34 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     # modify the G and B channels by adding the R channel to the respective
     # difference images
-    modified_green = demosaic_red_channel + median_green_red
-    modified_blue = demosaic_red_channel + median_blue_red
+    modified_green = median_green_red + demosaic_red_channel
+    modified_blue = median_blue_red + demosaic_red_channel
 
     # merge new B/G/R channels together
     improved_demosaic = cv2.merge((modified_blue, modified_green, demosaic_red_channel))
     if dtype_trace is True:
         print('(part 2) 7. after merging 3 improved_demosaic channels:')
         print('improved_demosaic.dtype =', improved_demosaic.dtype) # float32
+        print('--------------------------------------')
 
     # convert the result to 8-bit integer
     improved_demosaic = cv2.convertScaleAbs(improved_demosaic)
+
     if dtype_trace is True:
         print('(part 2) 8. after converting to 8-bit integer:')
         print('improved_demosaic.dtype =', improved_demosaic.dtype) # uint8
+        print('--------------------------------------')
 
     # compute the squared differences between the original and the improved_demosaic
     root_squared_diff = get_root_squared_differences(original, improved_demosaic)
+
     if dtype_trace is True:
         print('(part 2) root_squared_diff.dtype =', root_squared_diff.dtype) # uint8
-    if sum_diff is True:
-        print('(part 2) average diff on each pixel: %.5f' % (np.sum(root_squared_diff) / (root_squared_diff.shape[0] * root_squared_diff.shape[1])))
+        print('--------------------------------------')
+    if avg_diff is True:
+        number_of_pixels = root_squared_diff.shape[0] * root_squared_diff.shape[1]
+        print('(part 2) average diff on each pixel: %.5f' % (np.sum(root_squared_diff) / number_of_pixels))
+        print('--------------------------------------')
 
     # important for presentation!!
     # convert to unsigned int8 type so that the cv2.imshow will show using
@@ -277,7 +289,7 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
         # 2nd subplot (improved demosaic)
         plt.subplot(1, 3, 2)
         plt.imshow(cv2.cvtColor(improved_demosaic, cv2.COLOR_BGR2RGB))
-        plt.title('Improved Demosaic Image')
+        plt.title('Improved Demosaic Image (Part 2)')
         plt.xticks([])
         plt.yticks([])
 
@@ -292,9 +304,9 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
 
     ###### present the images using cv2.imshow() #####
     if cv2_show is True:
-        cv2.imshow(winname='Part 2 original', mat=original)
-        cv2.imshow(winname='Part 2 demosaic', mat=improved_demosaic)
-        cv2.imshow(winname='Part 2 difference image', mat=root_squared_diff)
+        cv2.imshow(winname='Original Image', mat=original)
+        cv2.imshow(winname='Improved Demosaic Image (Part 2)', mat=improved_demosaic)
+        cv2.imshow(winname='Root Squared Differences (Part 2)', mat=root_squared_diff)
 
 
 def main():
@@ -308,6 +320,7 @@ def main():
         print('1. after reading images:')
         print('original.dtype =', original.dtype)   # uint8
         print('bayer.dtype =', bayer.dtype)         # uint8
+        print('--------------------------------------')
 
     # separate channels for bayer image
     blue_channel, green_channel, red_channel = separate_channels(bayer)
@@ -319,6 +332,7 @@ def main():
         print('blue_channel.dtype =', blue_channel.dtype)
         print('green_channel.dtype =', green_channel.dtype)
         print('red_channel.dtype =', red_channel.dtype)
+        print('--------------------------------------')
 
     # initialize kernel for each channel
     blue_kernel, green_kernel, red_kernel = get_channel_kernels()
@@ -328,6 +342,7 @@ def main():
         print('blue_kernel.dtype =', blue_kernel.dtype)
         print('green_kernel.dtype =', blue_channel.dtype)
         print('red_kernel.dtype =', red_kernel.dtype)
+        print('--------------------------------------')
 
     # demosaicing
     demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel = \
@@ -339,6 +354,7 @@ def main():
         print('demosaic_blue_channel.dtype =', demosaic_blue_channel.dtype)
         print('demosaic_green_channel.dtype =', demosaic_green_channel.dtype)
         print('demosaic_red_channel.dtype =', demosaic_red_channel.dtype)
+        print('--------------------------------------')
 
     # part 1: show the concatenated 3 output images
     part_one_show(original, demosaic_blue_channel, demosaic_green_channel,
