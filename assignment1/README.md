@@ -28,7 +28,8 @@ There are 3 .jpg and .bmp images hardcoded in `main.py` in variables
 more images, you need to add the image names to both variables correspondingly.
 
 During testing, type the image index in `jpg_images` and `bmp_images` which 
-you would like to test, the result images will show after. 
+you would like to test, the 5 result images (Original, Part 1 Demosaic, 
+Part 1 Difference image, Part 2 Demosaic, Part 2 Difference image) will show after. 
 
 There are 2 available ways to present the result images
 
