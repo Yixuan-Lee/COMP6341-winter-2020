@@ -1,14 +1,15 @@
 # Assignment 1 README
 
-The assignment 1 is written in Python 3.6 and implemented functions
+The assignment 1 code is written in Python 3.6 and using PyCharm as IDE. 
+The code implemented functions:
 
 1. a linear interpolation that converts Bayer images to RGB images (Part 1)
 
 2. a improved bilinear interpolation approach that converts Bayer image to RGB 
 images (Part 2)
 
-3. compare the root squared difference of [Original, Demosaic, Part 1 difference] 
-and [Original, Improved Demosaic, Part 2 difference] 
+3. compare the root squared difference between *[Original, Demosaic (Part 1)]* 
+and *[Original, Improved Demosaic (Part 2)]*
 
 
 ## 1. Required packages
@@ -22,7 +23,7 @@ The code requires packages:
 3. Matplotlib
 
 ## 2. About code
-There are 3 .jpg and .bmp images hardcoded in `main.py` in variable 
+There are 3 .jpg and .bmp images hardcoded in `main.py` in variables 
 `jpg_images` and `bmp_images` at the very top. If it is necessary to test 
 more images, you need to add the image names to both variables correspondingly.
 
@@ -35,7 +36,7 @@ There are 2 available ways to present the result images
 
 - using cv2.show()
 
-You can choose either way or both, and you can switch by modifying the bool 
+You can choose either way or both, and you can switch by modifying the boolean 
 variables `matplot_show` and `cv2_show` at the very top. (By default, I am 
 using matplotlib.show())
 
