@@ -1,6 +1,15 @@
 # Assignment 1 README
 
-The assignment 1 is written in Python 3.6.
+The assignment 1 is written in Python 3.6 and implemented functions
+
+1. a linear interpolation that converts Bayer images to RGB images (Part 1)
+
+2. a improved bilinear interpolation approach that converts Bayer image to RGB 
+images (Part 2)
+
+3. compare the root squared difference of [Original, Demosaic, Part 1 difference] 
+and [Original, Improved Demosaic, Part 2 difference] 
+
 
 ## 1. Required packages
 
