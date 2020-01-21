@@ -23,6 +23,11 @@ The code requires packages:
 3. Matplotlib
 
 ## 2. About code
+
+**If you are testing using command line, please make sure you are in the 
+directory ``src`` before testing, and you can use command ``python3 main.py`` 
+to run the program.**
+
 There are 3 .jpg and .bmp images hardcoded in `main.py` in variables 
 `jpg_images` and `bmp_images` at the very top. If it is necessary to test 
 more images, you need to add the image names to both variables correspondingly.

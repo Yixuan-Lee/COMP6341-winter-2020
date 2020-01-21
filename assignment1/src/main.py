@@ -26,6 +26,16 @@ matplot_show = False
 cv2_show = True
 
 
+def show_image_list():
+    """
+    show the image list
+    """
+    print('image list:')
+
+    for i in range(len(jpg_images)):
+        print(str(i) + ':', '(' + jpg_images[i] + ', ' + bmp_images[i] + ')')
+
+
 def read_images():
     """
     read BMP and JPEG images then return
@@ -313,6 +323,9 @@ def main():
     """
     main function
     """
+    # show the image list
+    show_image_list()
+
     # read the images
     original, bayer = read_images()
 
@@ -356,7 +369,7 @@ def main():
         print('demosaic_red_channel.dtype =', demosaic_red_channel.dtype)
         print('--------------------------------------')
 
-    # part 1: show the concatenated 3 output images
+    # part 1: show the 3 output images
     part_one_show(original, demosaic_blue_channel, demosaic_green_channel,
         demosaic_red_channel)
 
