@@ -22,8 +22,8 @@ dtype_trace = False
 avg_diff = False
 
 # 2 ways to present the images
-matplot_show = True
-cv2_show = False
+matplot_show = False
+cv2_show = True
 
 
 def read_images():

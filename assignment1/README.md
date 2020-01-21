@@ -38,7 +38,7 @@ There are 2 available ways to present the result images
 
 You can choose either way or both, and you can switch by modifying the boolean 
 variables `matplot_show` and `cv2_show` at the very top. (By default, I am 
-using matplotlib.show())
+using cv2_show())
 
 
 # 3. References:
