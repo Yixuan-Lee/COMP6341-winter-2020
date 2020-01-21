@@ -1,4 +1,37 @@
-# References:
+# Assignment 1 README
+
+The assignment 1 is written in Python 3.6.
+
+## 1. Required packages
+
+The code requires packages:
+
+1. Numpy
+
+2. OpenCV
+
+3. Matplotlib
+
+## 2. About code
+There are 3 .jpg and .bmp images hardcoded in `main.py` in variable 
+`jpg_images` and `bmp_images` at the very top. If it is necessary to test 
+more images, you need to add the image names to both variables correspondingly.
+
+During testing, type the image index in `jpg_images` and `bmp_images` which 
+you would like to test, the result images will show after. 
+
+There are 2 available ways to present the result images
+
+- using matplotlib.show()
+
+- using cv2.show()
+
+You can choose either way or both, and you can switch by modifying the bool 
+variables `matplot_show` and `cv2_show` at the very top. (By default, I am 
+using matplotlib.show())
+
+
+# 3. References:
 
 1. [opencv cv::filter2D documentation](https://docs.opencv.org/3.4/d4/d86/group__imgproc__filter.html#ga27c049795ce870216ddfb366086b5a04)
 
@@ -10,16 +43,14 @@
 
 5. [opencv cv2.medianBlur example 1](https://medium.com/@florestony5454/median-filtering-with-python-and-opencv-2bce390be0d1)
 
-## Problem solving queries
+6. [np.dstack](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.dstack.html)
 
-1. [np.dstack](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.dstack.html)
+7. [Numpy Data types](https://docs.scipy.org/doc/numpy-1.13.0/user/basics.types.html)
 
-2. [Numpy Data types](https://docs.scipy.org/doc/numpy-1.13.0/user/basics.types.html)
+8. [opencv cv::imshow doc](https://docs.opencv.org/3.0-beta/modules/highgui/doc/user_interface.html#imshow)
 
-3. [opencv cv::imshow doc](https://docs.opencv.org/3.0-beta/modules/highgui/doc/user_interface.html#imshow)
+9. [cv2.medianBlur argument type requirement](https://stackoverflow.com/questions/48453576/opencv-error-unsupported-format-or-combination-of-formats-unsupported-combinat/48453577)
 
-4. [cv2.medianBlur argument type requirement](https://stackoverflow.com/questions/48453576/opencv-error-unsupported-format-or-combination-of-formats-unsupported-combinat/48453577)
+10. [Stack overflow: Difference between plt.show and cv2.imshow](https://stackoverflow.com/questions/38598118/difference-between-plt-show-and-cv2-imshow)
 
-5. [Stack overflow: Difference between plt.show and cv2.imshow](https://stackoverflow.com/questions/38598118/difference-between-plt-show-and-cv2-imshow)
-
-6. [cv2.convertScaleAbs](https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#convertscaleabs)
+11. [cv2.convertScaleAbs](https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#convertscaleabs)
