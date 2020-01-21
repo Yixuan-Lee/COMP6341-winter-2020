@@ -28,6 +28,7 @@ print(demosaic.shape)
 
 np.set_printoptions(precision=3)
 
-diff = np.sqrt(np.sum(np.square(original - demosaic), axis=2))
+diff = np.sqrt(np.sum(np.square(np.subtract(original, demosaic)), axis=2))
 print(diff)
+print(diff.shape)
 
