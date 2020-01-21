@@ -140,14 +140,16 @@ def get_root_squared_differences(original, demosaic):
     :param demosaic: demosaic image from BMP image (height, width, 3)
     :return: summed root squared differences of two images (height, width, 1)
     """
-    # squared differences
-    # diff_float64 = np.sum(np.square(np.subtract(original, demosaic)), axis=2)
+    original_blue, original_green, original_red = cv2.split(original)
+    demosaic_blue, demosaic_green, demosaic_red = cv2.split(demosaic)
 
-    # root squared differences
-    diff_float64 = np.sqrt(np.sum(np.square(np.subtract(original, demosaic)), axis=2))
-    diff_uint8 = cv2.convertScaleAbs(diff_float64)
-    # print(diff_uint8[80:90, 80:90])
-    return diff_uint8
+    blue_diff = (original_blue - demosaic_blue) ** 2
+    green_diff = (original_green - demosaic_green) ** 2
+    red_diff = (original_red - demosaic_red) ** 2
+
+    diff = np.sqrt(blue_diff + green_diff + red_diff)
+    diff = cv2.convertScaleAbs(diff)
+    return diff
 
 
 def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demosaic_red_channel):
@@ -167,14 +169,6 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
         print('demosaic.dtype =', demosaic.dtype)   # float32
         print('--------------------------------------')
 
-    # convert the result to 8-bit integer
-    demosaic = cv2.convertScaleAbs(demosaic)
-
-    if dtype_trace is True:
-        print('(part 1) 6. after converting to 8-bit integer:')
-        print('demosaic.dtype =', demosaic.dtype)       # uint8
-        print('--------------------------------------')
-
     # compute the root squared differences between the original and the demosaic
     root_squared_diff = get_root_squared_differences(original, demosaic)
     if dtype_trace is True:
@@ -183,6 +177,14 @@ def part_one_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     if avg_diff is True:
         number_of_pixels = root_squared_diff.shape[0] * root_squared_diff.shape[1]
         print('(part 1) average diff on each pixel: %.5f' % (np.sum(root_squared_diff) / number_of_pixels))
+        print('--------------------------------------')
+
+    # convert the result to 8-bit integer
+    demosaic = cv2.convertScaleAbs(demosaic)
+
+    if dtype_trace is True:
+        print('(part 1) 6. after converting to 8-bit integer:')
+        print('demosaic.dtype =', demosaic.dtype)  # uint8
         print('--------------------------------------')
 
     # important for presentation!!
@@ -260,14 +262,6 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
         print('improved_demosaic.dtype =', improved_demosaic.dtype) # float32
         print('--------------------------------------')
 
-    # convert the result to 8-bit integer
-    improved_demosaic = cv2.convertScaleAbs(improved_demosaic)
-
-    if dtype_trace is True:
-        print('(part 2) 8. after converting to 8-bit integer:')
-        print('improved_demosaic.dtype =', improved_demosaic.dtype) # uint8
-        print('--------------------------------------')
-
     # compute the squared differences between the original and the improved_demosaic
     root_squared_diff = get_root_squared_differences(original, improved_demosaic)
 
@@ -277,6 +271,14 @@ def part_two_show(original, demosaic_blue_channel, demosaic_green_channel, demos
     if avg_diff is True:
         number_of_pixels = root_squared_diff.shape[0] * root_squared_diff.shape[1]
         print('(part 2) average diff on each pixel: %.5f' % (np.sum(root_squared_diff) / number_of_pixels))
+        print('--------------------------------------')
+
+    # convert the result to 8-bit integer
+    improved_demosaic = cv2.convertScaleAbs(improved_demosaic)
+
+    if dtype_trace is True:
+        print('(part 2) 8. after converting to 8-bit integer:')
+        print('improved_demosaic.dtype =', improved_demosaic.dtype)  # uint8
         print('--------------------------------------')
 
     # important for presentation!!
