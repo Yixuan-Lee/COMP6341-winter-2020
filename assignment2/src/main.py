@@ -5,6 +5,7 @@ import cv2 as cv
 import numpy as np
 from feature_detection import harris_corner_detection
 from feature_detection import harris_corner_detection_ref
+from feature_description import calc_sift_descriptor_for_all_interest_points
 
 image_sets_folder = '../image_sets'
 
@@ -90,18 +91,26 @@ def main():
     )
 
     # show the output of my harris corner detection
-    cv.imshow('my harris corner output', harris_out)
+#     cv.imshow('my harris corner output', harris_out)
 
     # show the output of the build-in harris corner detection (just for
     # comparison)
-    harris_corner_detection_ref(image_1_orig, 0.01)
+#      harris_out_ref = harris_corner_detection_ref(image_1_orig, 0.01)
 
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # show the output of build-in harris corner detection function
+#     cv.imshow('build-in harris corner', harris_out_ref)
+#     cv.waitKey(0)
+#     cv.destroyAllWindows()
 
     # ################# 3. Feature Description ################# #
+    # key: KeyPoint object
+    # value: descriptor
+    interest_points_descriptor_dict = dict()
 
+    calc_sift_descriptor_for_all_interest_points(image_1_orig,
+        interest_points_image_1, interest_points_descriptor_dict)
 
+    print(interest_points_descriptor_dict)
 
     # ################### 4. Feature Matching ################### #
 
