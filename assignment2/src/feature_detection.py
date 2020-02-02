@@ -79,6 +79,7 @@ def harris_corner_detection_ref(image_orig, threshold):
 
     :param image_orig:  original colored image
     :param threshold:   harris detection threshold
+    :return build-in harris corner output
     """
     # convert the colored image to greyscale and transfer to type float32
     gray_image_orig = cv.cvtColor(image_orig, cv.COLOR_BGR2GRAY)
@@ -90,10 +91,10 @@ def harris_corner_detection_ref(image_orig, threshold):
     dst = cv.dilate(dst, None)
 
     # thresholding and marking
-    image_orig[dst > threshold * dst.max()] = [0, 0, 255]
+    harris_out_ref = image_orig.copy()
+    harris_out_ref[dst > threshold * dst.max()] = [0, 0, 255]
 
-    # show the output of build-in harris corner detection function
-    cv.imshow('build-in harris corner', image_orig)
+    return harris_out_ref
 
 
 def harris_corner_detection(image_orig, threshold, interest_points_list):
@@ -202,7 +203,7 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
                 interest_points_list.append(interest_point)
 
                 # print the interest point's position
-                # print('(%d, %d)' % (i, j))
+                # print('(%d, %d)' % (j, i))
             else:
                 # keep neighborhood and suppress current response
                 R_normalized[i, j] = 0
