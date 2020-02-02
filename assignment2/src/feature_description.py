@@ -56,7 +56,7 @@ def calc_sift_decriptor(gray_image_orig, descriptor):
     """
     calculate the sift descriptor for each interest point
 
-    :param gray_image_orig: grayscale image
+    :param gray_image_orig: greyscale image
     :param descriptor:      descriptor of an interest point
     """
     # height and width of the grayscale image
@@ -75,10 +75,10 @@ def calc_sift_decriptor(gray_image_orig, descriptor):
                     p_y = descriptor.y + j        # number of rows in image
                     idx_x = i + half_window_size  # make sure positive index
                     idx_y = j + half_window_size  # make sure positive index
-                    # set the pixel in 18x18 window
+                    # copy the pixels from the grey image to 18x18 window in descriptor
                     descriptor.window_18_18[idx_x, idx_y] = float(gray_image_orig[p_y, p_x])
 
-    # Step 2: compute the magnitude for each pixel in 16x16 window
+    # Step 2: compute the magnitude and theta for each pixel in 16x16 window
     for i in range(16):
         for j in range(16):
             # set the index in descriptor.window_18_18 due to the 1 padding
@@ -94,23 +94,26 @@ def calc_sift_decriptor(gray_image_orig, descriptor):
     grid_cell_idx = 0
     for i in range(0, window_size, 4):
         for j in range(0, window_size, 4):
+            # orientation histogram of each cell
             grid_cell_orientations = np.zeros((1, 8), dtype=np.int32)
+
             for x in range(4):
                 for y in range(4):
-                    # coordinates in descriptor.magnitudes and descriptor.thetas
+                    # x and y coordinates in magnitudes and thetas
                     p_x = x + i
                     p_y = y + j
 
                     # compute the vote for which bin
                     vote = int(descriptor.thetas[p_x, p_y] / 45)
                     if vote == 8:
-                        # when descriptor.thetas[p_x, p_y] = 360
+                        # when descriptor.thetas[p_x, p_y] = 360, vote = 8,
+                        # the pixel votes for 7th bin
                         vote = 7
 
-                    # increment the bin
+                    # increment the votes in the bin
                     grid_cell_orientations[0, vote] += 1
 
-            # set the orientation histogram of 4x4 cell to the descriptor
+            # set the orientation histogram of the 4x4 cell to the descriptor
             descriptor.orientation_histogram[grid_cell_idx, :] = grid_cell_orientations
             grid_cell_idx += 1
 
@@ -118,7 +121,7 @@ def calc_sift_decriptor(gray_image_orig, descriptor):
     descriptor.flatten_orientation_histogram()
 
     # Step 4: Threshold normalize the descriptor
-    # (there is always a few elements which are bigger than 0.2)
+    # (however there is always a few elements which are bigger than 0.2)
     descriptor.normalize_descriptor()
 
 
@@ -130,8 +133,8 @@ def calc_sift_descriptor_for_all_interest_points(image_orig,
     :param image_orig:                      original colored image
     :param interest_points_list:            a list of interest points
     :param interest_points_descriptor_dict: dictionary of descriptors
-                                            key: cv.KeyPoint
-                                            value: descriptor
+                                                key:    cv.KeyPoint
+                                                value:  descriptor
     """
     # convert the colored image to greyscale
     gray_image_orig = cv.cvtColor(image_orig, cv.COLOR_BGR2GRAY)
