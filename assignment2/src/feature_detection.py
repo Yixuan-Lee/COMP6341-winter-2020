@@ -147,9 +147,9 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
 
     if trace_shape is True:
         print('gray_image_orig.shape', gray_image_orig.shape)
-        print('gaussian_Ix2.shape =', gaussian_Ix2.shape)  # same as gray_image_orig.shape
-        print('gaussian_Iy2.shape =', gaussian_Iy2.shape)  # same as gray_image_orig.shape
-        print('gaussian_IxIy.shape =', gaussian_IxIy.shape)# same as gray_image_orig.shape
+        print('gaussian_Ix2.shape =', gaussian_Ix2.shape)   # same as gray_image_orig.shape
+        print('gaussian_Iy2.shape =', gaussian_Iy2.shape)   # same as gray_image_orig.shape
+        print('gaussian_IxIy.shape =', gaussian_IxIy.shape) # same as gray_image_orig.shape
 
     # Step 3: Compute corner response function R for each pixel
     # initialize the response matrix R
@@ -207,4 +207,3 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
             else:
                 # keep neighborhood and suppress current response
                 R_normalized[i, j] = 0
-

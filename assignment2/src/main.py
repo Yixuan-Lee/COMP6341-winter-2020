@@ -1,8 +1,6 @@
 import os
 import numbers
-import decimal
 import cv2 as cv
-import numpy as np
 from feature_detection import harris_corner_detection
 from feature_detection import harris_corner_detection_ref
 from feature_description import calc_sift_descriptor_for_all_interest_points
@@ -13,6 +11,10 @@ image_sets_folder = '../image_sets'
 
 
 def read_images():
+    """
+    load 2 images
+    :return 2 images
+    """
     valid_files = False
     global image_1, image_2
     global image_1_path, image_2_path
@@ -48,6 +50,10 @@ def read_images():
 
 
 def read_threshold_harris():
+    """
+    read harris corner detection threshold
+    :return: harris corner detection threshold
+    """
     valid = False
     threshold = 0
 
@@ -67,6 +73,10 @@ def read_threshold_harris():
 
 
 def read_ssd_threshold():
+    """
+    read SSD distance threshold
+    :return: SSD distance threshold
+    """
     valid = False
     threshold = 0
 
@@ -85,6 +95,10 @@ def read_ssd_threshold():
 
 
 def read_ratio_test():
+    """
+    read ratio test (best_ssd_distance / second_best_ssd_distance)
+    :return: ratio (best_ssd_distance / second_best_ssd_distance)
+    """
     valid = False
     ratio = 0
 
@@ -122,11 +136,11 @@ def main():
     harris_corner_detection(image_2_orig, threshold_harris,
         interest_points_image_2)
 
-    # initialize the placeholder
+    # initialize placeholders holding the outputs of harris corner detection
     harris_out_1 = image_1_orig.copy()
     harris_out_2 = image_2_orig.copy()
 
-    # draw the interest points on the placeholder
+    # draw the interest points on initial images
     cv.drawKeypoints(
         image=image_1_orig,
         keypoints=interest_points_image_1,
@@ -140,18 +154,21 @@ def main():
         color=(255, 0, 0)  # show interest points in blue color
     )
 
-    # show the output of my harris corner detection
-#     cv.imshow('my harris corner output 1', harris_out)
-#     cv.imshow('my harris corner output 2', harris_out)
+    # show the outputs of my harris corner detection
+    cv.imshow('Harris Corner (Image 1)', harris_out_1)
+    cv.imshow('Harris Corner (Image 2)', harris_out_2)
 
     # show the output of the build-in harris corner detection (just for
     # comparison)
-#      harris_out_ref = harris_corner_detection_ref(image_1_orig, 0.01)
+    harris_out_ref_1 = harris_corner_detection_ref(image_1_orig, 0.01)
+    harris_out_ref_2 = harris_corner_detection_ref(image_2_orig, 0.01)
 
     # show the output of build-in harris corner detection function
-#     cv.imshow('build-in harris corner', harris_out_ref)
-#     cv.waitKey(0)
-#     cv.destroyAllWindows()
+    cv.imshow('Build-in Harris Corner (Image 1)', harris_out_ref_1)
+    cv.imshow('Build-in Harris Corner (Image 2)', harris_out_ref_2)
+
+    cv.waitKey(0)
+    cv.destroyAllWindows()
 
     print('------------ Feature Detection Done ------------')
 
@@ -176,14 +193,14 @@ def main():
     # read ssd distance threshold (recommended: 500 ~ 800)
     ssd_threshold = read_ssd_threshold()
 
-    # read the ratio test (recommended: 0.75 ~ 0.80)
+    # read the ratio test (recommended: 0.70 ~ 0.80)
     ratio_test = read_ratio_test()
 
     # define a list which stores the matching relationship
     dmatch_list = list()
 
     # define 2 lists which store the interest points in 2 images
-    # correspondingly (index-0 matches to index-0)
+    # correspondingly (index-0 matches with index-0)
     ip_match_image_1 = list()
     ip_match_image_2 = list()
 
@@ -198,8 +215,6 @@ def main():
     match_out = cv.drawMatches(img1=image_1_orig, keypoints1=ip_match_image_1,
         img2=image_2_orig, keypoints2=ip_match_image_2,
         matches1to2=dmatch_list, outImg=None)
-
-    print(match_out.shape)
 
     cv.imshow('Feature Matching', match_out)
     cv.waitKey(0)
