@@ -48,3 +48,10 @@ class sift_descriptor:
         set self.self.orientation_histogram_norm_128
         """
         self.orientation_histogram_norm_128 = np.ndarray.flatten(self.orientation_histogram)
+
+    def get_descriptor(self):
+        """
+        return flattened self.orientation_histogram
+        :return: flattened self.orientation_histogram
+        """
+        return self.orientation_histogram_norm_128
