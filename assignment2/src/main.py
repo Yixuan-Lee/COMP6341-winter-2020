@@ -167,6 +167,8 @@ def main():
     cv.imshow('Build-in Harris Corner (Image 1)', harris_out_ref_1)
     cv.imshow('Build-in Harris Corner (Image 2)', harris_out_ref_2)
 
+    print('------------ Showing Interest Points ------------')
+
     cv.waitKey(0)
     cv.destroyAllWindows()
 
@@ -193,7 +195,7 @@ def main():
     # read ssd distance threshold (recommended: 500 ~ 800)
     ssd_threshold = read_ssd_threshold()
 
-    # read the ratio test (recommended: 0.70 ~ 0.80)
+    # read the ratio test (recommended: 0.60 ~ 0.80)
     ratio_test = read_ratio_test()
 
     # define a list which stores the matching relationship
