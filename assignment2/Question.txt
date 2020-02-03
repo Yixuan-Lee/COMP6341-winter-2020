@@ -1,0 +1,34 @@
+--------------------------------------------------------------------------
+----                    Questions about Assignment 2                  ----
+--------------------------------------------------------------------------
+
+Question 1: There is often some mismatch. Is is okay?
+show an example:
+    Image 1:                 graf/img2.ppm
+    Image 2:                 graf/img4.ppm
+    Harris Corner threshold: 70
+    SSD distance threshold:  500
+    ratio test:              0.8
+
+Answer:
+
+
+--------------------------------------------------------------------------
+
+Question 2: My program cannot read .tga image, and I couldn't find the reason,
+This is the error output:
+    gray_image_orig = cv.cvtColor(image_orig, cv.COLOR_BGR2GRAY)
+    cv2.error: OpenCV(4.1.2) /Users/travis/build/skvark/opencv-python/opencv/modules/imgproc/src/color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
+
+Answer:
+
+
+--------------------------------------------------------------------------
+
+Question 3: Extra credit 1 (mandatory for grads), which slide discusses contrast invariant?
+
+Answer:
+
+
+--------------------------------------------------------------------------
+
