@@ -10,22 +10,23 @@ def feature_distance(descriptor_1, descriptor_2):
     :param descriptor_2: descriptor of interest point 2
     :return: sum of difference between 2 descriptors
     """
-    return np.sum(np.square(descriptor_1.get_descriptor()
-                            - descriptor_2.get_descriptor()))
+    return np.sum(np.square(descriptor_1.get_descriptor() - descriptor_2.get_descriptor()))
 
 
 def descriptors_matching(descriptor_dict_image_1, descriptor_dict_image_2,
         dmatch_list, ip_match_image_1, ip_match_image_2,
-        ssd_threhold, ratio_test):
+        ssd_threshold, ratio_test):
     """
     find the matching and store the DMatch in dmatch_list
 
     :param descriptor_dict_image_1: descriptor dictionary of image 1
     :param descriptor_dict_image_2: descriptor dictionary of image 2
     :param dmatch_list:             a list which stores DMatches
-    :param ip_match_image_1:        a list which stores matched interest points in image 1
-    :param ip_match_image_2:        a list which stores matched interest points in image 2
-    :param ssd_threhold:            SSD distance threshold
+    :param ip_match_image_1:        a list which stores matched interest
+                                    points in image 1
+    :param ip_match_image_2:        a list which stores matched interest
+                                    points in image 2
+    :param ssd_threshold:           SSD distance threshold
     :param ratio_test:              ratio threshold (best/second_best)
     """
     # initialize variables
@@ -42,7 +43,7 @@ def descriptors_matching(descriptor_dict_image_1, descriptor_dict_image_2,
             ssd_dist = feature_distance(descriptor_1, descriptor_2)
 
             # filter out the SSD distance which is bigger than the threshold
-            if ssd_dist >= ssd_threhold:
+            if ssd_dist >= ssd_threshold:
                 continue
 
             if ssd_dist < best_ssd_dist:
