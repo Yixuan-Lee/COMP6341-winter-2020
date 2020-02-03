@@ -31,27 +31,88 @@ class sift_descriptor:
             self.orientation_histogram = np.zeros((16, 8), dtype=np.int)
 
             # normalized version of orientation histogram
-            self.orientation_histogram_norm_128 = np.zeros((1, 128), dtype=np.float32)
+            self.orientation_histogram_norm_128 = np.zeros((1, 128),
+                dtype=np.float32)
+
+    def set_magnitude_and_theta(self):
+        """
+        set magnitude and theta for each pixel in 16x16 window
+        """
+        for i in range(16):
+            for j in range(16):
+                # set the indices which fit in descriptor.window_18_18 due to
+                # the 1 extra padding
+                w_18_18_i = i + 1
+                w_18_18_j = j + 1
+
+                # set the magnitude at descriptor.magnitudes[i, j] and
+                # the theta at descriptor.thetas[i, j]
+                diff_x = self.window_18_18[w_18_18_i + 1, w_18_18_j] - self.window_18_18[w_18_18_i - 1, w_18_18_j]
+                diff_y = self.window_18_18[w_18_18_i, w_18_18_j + 1] - self.window_18_18[w_18_18_i, w_18_18_j - 1]
+
+                # set magnitude
+                magnitude = np.sqrt(diff_x ** 2 + diff_y ** 2)
+                self.magnitudes[i, j] = magnitude
+
+                # set theta
+                theta = (np.arctan2(diff_x, diff_y) + np.pi) * 180 / np.pi
+                self.thetas[i, j] = theta
+
+    def set_orientation_histogram_for_grid_cells(self):
+        """
+        calculate the orientation histogram for 16 4x4 grid cells
+        """
+        window_size = 16
+        grid_cell_idx = 0
+        for i in range(0, window_size, 4):
+            for j in range(0, window_size, 4):
+                # orientation histogram of each cell
+                grid_cell_orientations = np.zeros((1, 8), dtype=np.int32)
+
+                for x in range(4):
+                    for y in range(4):
+                        # x and y coordinates in magnitudes and thetas
+                        p_x = x + i
+                        p_y = y + j
+
+                        # compute the vote for which bin
+                        vote = int(self.thetas[p_x, p_y] / 45)
+                        if vote == 8:
+                            # when descriptor.thetas[p_x, p_y] = 360, vote = 8
+                            # the pixel votes for 7th bin
+                            vote = 7
+
+                        # increment the votes in the bin
+                        grid_cell_orientations[0, vote] += 1
+
+                # set the orientation histogram of the 4x4 cell to the
+                # descriptor
+                self.orientation_histogram[grid_cell_idx, :] = \
+                    grid_cell_orientations
+                grid_cell_idx += 1
+
+        # flatten the orientation histogram so that to
+        # set self.orientation_histogram_norm_128
+        self.orientation_histogram_norm_128 = np.ndarray.flatten(
+            self.orientation_histogram)
 
     def normalize_descriptor(self):
         """
         normalize self.orientation_histogram_norm_128 such that sum of square
         of elements = 1 and each element < 0.2
-        (but there is always a few element >= 0.2 slightly)
+        (but there is always a few elements >= 0.2 slightly, if I make it in
+        a while loop, there will be an infinite loop)
+
+        reference website is declared in README.md
         """
         self.orientation_histogram_norm_128 = self.orientation_histogram_norm_128 / norm(self.orientation_histogram_norm_128)
         self.orientation_histogram_norm_128 = np.clip(self.orientation_histogram_norm_128, 0, 0.2)
         self.orientation_histogram_norm_128 = self.orientation_histogram_norm_128 / norm(self.orientation_histogram_norm_128)
 
-    def flatten_orientation_histogram(self):
-        """
-        set self.self.orientation_histogram_norm_128
-        """
-        self.orientation_histogram_norm_128 = np.ndarray.flatten(self.orientation_histogram)
-
     def get_descriptor(self):
         """
-        return flattened self.orientation_histogram
+        return flattened self.orientation_histogram, which is
+        self.orientation_histogram_norm_128
         :return: flattened self.orientation_histogram
         """
         return self.orientation_histogram_norm_128
