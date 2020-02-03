@@ -14,3 +14,11 @@ yosemite/Yosemite2.jpg
 my_images/oldwell.jpg
 my_images/shapes.png
 
+mural/img.png
+mural/img_cut.png
+mural/img_half.png
+mural/img_rotate_10.png
+mural/img_rotate_contrast.png
+mural/img_scale_70%.png
+
+
