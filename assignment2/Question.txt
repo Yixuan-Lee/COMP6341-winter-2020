@@ -1,34 +1,135 @@
 --------------------------------------------------------------------------
 ----                    Questions about Assignment 2                  ----
 --------------------------------------------------------------------------
+status:
+[Solved]
+[Still confused]
+[To be asked]
 
+--------------------------------------------------------------------------
+[Solved]
 Question 1: There is often some mismatch. Is is okay?
 show an example:
     Image 1:                 graf/img2.ppm
     Image 2:                 graf/img4.ppm
-    Harris Corner threshold: 70
-    SSD distance threshold:  500
-    ratio test:              0.8
+    Harris Corner threshold: 20
+    SSD distance threshold:  800
+    ratio test:              0.6
 
 Answer:
+Prof will talk about it on Tuesday
+
+Class Assistant Farham:
+Compare the results before/after non-maximum suppression
+see if there is an improvement
 
 
 --------------------------------------------------------------------------
-
+[Solved]
 Question 2: My program cannot read .tga image, and I couldn't find the reason,
 This is the error output:
     gray_image_orig = cv.cvtColor(image_orig, cv.COLOR_BGR2GRAY)
     cv2.error: OpenCV(4.1.2) /Users/travis/build/skvark/opencv-python/opencv/modules/imgproc/src/color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
 
 Answer:
+Please use GIMP or Photoshop to convert to PNG.
 
 
 --------------------------------------------------------------------------
-
+[To be asked]
 Question 3: Extra credit 1 (mandatory for grads), which slide discusses contrast invariant?
 
 Answer:
+Threshold normalize the descriptor (page 19)
+
+testing image: one at morning, one at night
+
+show an example:
+    Image 1:                 contrast/day_image.png
+    Image 2:                 contrast/night_image.png
+    Harris Corner threshold: 40
+    SSD distance threshold:  800
+    ratio test:              0.7
+
+See Question 5
+
+--------------------------------------------------------------------------
+[Solved]
+Question 4: ANMS implementation
+
+Answer:
+For interest points detected by normal non-maximum suppression, we first
+select the best one (max c(H) one) and suppress all the interest points in a
+radius of r. Then we find the best interest point except the interest points
+in the cycle we just check, and suppress all the interest points in a radius
+of r,
+...
+Finally we get interest points which are distributed
+(reference to TA Farhan's note on paper)
+
+--------------------------------------------------------------------------
+[Solved]
+Question 5: How do we make features more contrast invariant?
+
+Answer:
+see Lecture_07_Feature_Descriptors.pdf
+page 20 - Threshold normalize the descriptor
+
+Still some above 0.2 after the second norm?
+Answer:
+try both methods and more images and compare
+norm->clip->norm
+norm->clip->norm->clip->norm
+see which method is better
+
+--------------------------------------------------------------------------
+[Solved]
+Question 6: How do we handle mismatches?
+
+Answer:
+A few mismatches are allowed.
+
+--------------------------------------------------------------------------
+[Solved]
+Question 7: Extra credit 3: scale invariant
+
+Answer:
+see Lecture_06_Interest_Point_Operators.pdf
+page 66 - Scale invarint interest points
+(Gaussian Pyramid)
+
+--------------------------------------------------------------------------
+[Solved]
+Question 8: Extra credit 4: outperform the SSD ratio test
+
+Answer:
+Need to find a better method online and implement it (no hints in slides)
+
+--------------------------------------------------------------------------
+[Solved]
+Question 9: How do we handle rotation invariance during feature description?
+
+Answer:
+rotation invariance should be considered in detector
+
+In detector, the parts reflecting the rotation invariance is calculating the
+gradients
+In descriptor, the parts reflecting the rotation invariance is a range of
+orientations go to the same bin in orientation historgram
+
+--------------------------------------------------------------------------
+[Solved]
+Question 10: Extra credit 5: A faster matching algorithm
+
+Answer:
+Find out online and implement it (no hints in slides)
 
 
 --------------------------------------------------------------------------
+[Solved]
+Question 11: Office hour of assistants:
 
+Farhan: Thursday 3-4 pm, EV3.260
+Amin: Wednesday 3-4 pm, EV3.260
+
+--------------------------------------------------------------------------

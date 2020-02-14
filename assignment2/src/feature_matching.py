@@ -38,6 +38,7 @@ def descriptors_matching(descriptor_dict_image_1, descriptor_dict_image_2,
         best_ssd_dist = float('inf')
         second_best_ssd_dist = float('inf')
 
+        ############## 3.2 SSD distance ##############
         for ip_2, descriptor_2 in descriptor_dict_image_2.items():
             # compute the SSD distance between 2 descriptors
             ssd_dist = feature_distance(descriptor_1, descriptor_2)
@@ -57,6 +58,7 @@ def descriptors_matching(descriptor_dict_image_1, descriptor_dict_image_2,
             elif ssd_dist < second_best_ssd_dist:
                 second_best_ssd_dist = ssd_dist
 
+        ############## 3.3 ratio test ##############
         # filter matches by comparing the ratio
         ratio = best_ssd_dist / second_best_ssd_dist
         if ratio > ratio_test:
@@ -64,6 +66,7 @@ def descriptors_matching(descriptor_dict_image_1, descriptor_dict_image_2,
             # the match (associate with the 'fence' example in slide)
             continue
         else:
+            ########## 3.1 match corresponding feature descriptors ##########
             # append the matched interest points in image_1 and image_2 to
             # 2 lists correspondingly
             ip_match_image_1.append(best_ip_1)

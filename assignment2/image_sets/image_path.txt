@@ -11,6 +11,12 @@ panorama/pano1_0011.tga
 yosemite/Yosemite1.jpg
 yosemite/Yosemite2.jpg
 
+panorama/pano1_0008.jpg
+panorama/pano1_0009.jpg
+
+panorama/pano1_0010.jpg
+panorama/pano1_0011.jpg
+
 my_images/oldwell.jpg
 my_images/shapes.png
 

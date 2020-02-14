@@ -125,7 +125,7 @@ def main():
     # read harris corner detection threshold (recommended: 40 ~ 80)
     threshold_harris = read_threshold_harris()
 
-    # define a list to record the interest points
+    # define a list to record the interest points in 2 images
     interest_points_image_1 = list()
     interest_points_image_2 = list()
 
@@ -159,13 +159,13 @@ def main():
     cv.imshow('Harris Corner (Image 2)', harris_out_2)
 
     # show the output of the build-in harris corner detection (just for
-    # comparison)
-    harris_out_ref_1 = harris_corner_detection_ref(image_1_orig, 0.01)
-    harris_out_ref_2 = harris_corner_detection_ref(image_2_orig, 0.01)
+    # comparison purpose)
+#     harris_out_ref_1 = harris_corner_detection_ref(image_1_orig, 0.05)
+#     harris_out_ref_2 = harris_corner_detection_ref(image_2_orig, 0.05)
 
     # show the output of build-in harris corner detection function
-    cv.imshow('Build-in Harris Corner (Image 1)', harris_out_ref_1)
-    cv.imshow('Build-in Harris Corner (Image 2)', harris_out_ref_2)
+#     cv.imshow('Build-in Harris Corner (Image 1)', harris_out_ref_1)
+#     cv.imshow('Build-in Harris Corner (Image 2)', harris_out_ref_2)
 
     print('------------ Showing Interest Points ------------')
 
@@ -176,8 +176,8 @@ def main():
 
     # ################# 3. Feature Description ################# #
     print('-------------- Feature Description --------------')
-    # define a dictionary to record the correspondence of interest points and
-    # descriptors
+    # define 2 dictionaries to record the correspondence of interest points
+    # and descriptors
     #   key: KeyPoint object
     #   value: descriptor
     interest_points_descriptor_dict_image_1 = dict()

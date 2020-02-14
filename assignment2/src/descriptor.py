@@ -21,9 +21,11 @@ class sift_descriptor:
             # L(x, y-1), so we have to have 1 padding for the border pixels
             self.window_18_18 = np.zeros((18, 18), dtype=np.float32)
 
-            # magnitude and theta for each pixel in the window
+            # magnitude and theta for each pixel in the 16x16 window
             self.magnitudes = np.zeros((16, 16), dtype=np.float32)
+            self.dominant_magnitude = 0
             self.thetas = np.zeros((16, 16), dtype=np.float32)
+            self.dominant_theta = 0
 
             # orientation histogram
             # 16x16 window consists of 16 4x4 cells, each cell orients one of
@@ -38,6 +40,7 @@ class sift_descriptor:
         """
         set magnitude and theta for each pixel in 16x16 window
         """
+        ############## 2.1 angle descriptor ##############
         for i in range(16):
             for j in range(16):
                 # set the indices which fit in descriptor.window_18_18 due to
@@ -58,10 +61,14 @@ class sift_descriptor:
                 theta = (np.arctan2(diff_x, diff_y) + np.pi) * 180 / np.pi
                 self.thetas[i, j] = theta
 
+                # set dominant_maginitude and dominant_theta
+
+
     def set_orientation_histogram_for_grid_cells(self):
         """
         calculate the orientation histogram for 16 4x4 grid cells
         """
+        ############## 2.2 vote descriptor ##############
         window_size = 16
         grid_cell_idx = 0
         for i in range(0, window_size, 4):
@@ -75,6 +82,7 @@ class sift_descriptor:
                         p_x = x + i
                         p_y = y + j
 
+                        ############## 2.4 rotational invariant ##############
                         # compute the vote for which bin
                         vote = int(self.thetas[p_x, p_y] / 45)
                         if vote == 8:
@@ -87,8 +95,7 @@ class sift_descriptor:
 
                 # set the orientation histogram of the 4x4 cell to the
                 # descriptor
-                self.orientation_histogram[grid_cell_idx, :] = \
-                    grid_cell_orientations
+                self.orientation_histogram[grid_cell_idx, :] = grid_cell_orientations
                 grid_cell_idx += 1
 
         # flatten the orientation histogram so that to
@@ -102,9 +109,8 @@ class sift_descriptor:
         of elements = 1 and each element < 0.2
         (but there is always a few elements >= 0.2 slightly, if I make it in
         a while loop, there will be an infinite loop)
-
-        reference website is declared in README.md
         """
+        ############## 2.3 contrast invariance ##############
         self.orientation_histogram_norm_128 = self.orientation_histogram_norm_128 / norm(self.orientation_histogram_norm_128)
         self.orientation_histogram_norm_128 = np.clip(self.orientation_histogram_norm_128, 0, 0.2)
         self.orientation_histogram_norm_128 = self.orientation_histogram_norm_128 / norm(self.orientation_histogram_norm_128)

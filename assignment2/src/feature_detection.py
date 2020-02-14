@@ -30,8 +30,7 @@ def is_local_maxima(R, x, y, height, width):
             compare_x = x + i
             compare_y = y + j
 
-            if compare_x < 0 or compare_y < 0 \
-                    or compare_x >= height or compare_y >= width:
+            if compare_x < 0 or compare_y < 0 or compare_x >= height or compare_y >= width:
                 # handle IndexOutOfBound conditions
                 continue
 
@@ -41,15 +40,15 @@ def is_local_maxima(R, x, y, height, width):
     return True
 
 
-def suppress_neighborhood(R, x, y, height, width):
+def suppress_neighborhood(R_normalized, x, y, height, width):
     """
-    suppress responses of neighborhood of (x, y)
+    suppress responses of neighborhood of (x, y) to 0
 
-    :param R:       response matrix
-    :param x:       current x position
-    :param y:       current y position
-    :param height:  height of R
-    :param width:   width of R
+    :param R_normalized:    response matrix
+    :param x:               current x position
+    :param y:               current y position
+    :param height:          height of R
+    :param width:           width of R
     """
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
@@ -60,19 +59,93 @@ def suppress_neighborhood(R, x, y, height, width):
             suppress_x = x + i
             suppress_y = y + j
 
-            if suppress_x < 0 or suppress_y < 0 \
-                    or suppress_x >= height or suppress_y >= width:
+            if suppress_x < 0 or suppress_y < 0 or suppress_x >= height or suppress_y >= width:
                 # handle IndexOutOfBound conditions
                 continue
 
-            R[suppress_x, suppress_y] = 0
+            # suppress the neighbors
+            R_normalized[suppress_x, suppress_y] = 0
+
+
+def non_maximum_suppression(R_normalized, height, width,
+        interest_point_before_suppression, interest_point_after_suppression):
+    """
+    Apply non-maximum suppression on interest_point_after_thresholding
+
+    :param R_normalized:
+    :param height:
+    :param width:
+    :param interest_point_before_suppression:
+    :param interest_point_after_suppression:
+    """
+    for ip in interest_point_before_suppression:
+        x = int(ip.pt[0])   # x -> width
+        y = int(ip.pt[1])   # y -> height
+
+        if is_local_maxima(R_normalized, y, x, height, width):
+            # keep current response and suppress the neighborhood
+            suppress_neighborhood(R_normalized, y, x, height, width)
+
+            # record the interest point' position
+            # Attention: here is (j, i) not (i, j)!! because j is on
+            # x-axis, and i is on y-axis
+            interest_point = cv.KeyPoint(x=x, y=y, _size=5, _angle=-1)
+            interest_point.response = R_normalized[y, x]  # set response
+            interest_point_after_suppression.append(interest_point)
+
+            # print the interest point's position
+            # print('(%d, %d)' % (j, i))
+        else:
+            # keep neighborhood and suppress the current pixel's response
+            # to 0
+            R_normalized[y, x] = 0
+
+
+def dist(x_i, x_j):
+    """
+    Compute the distance between x_i and x_j
+    :param x_i: an interest point
+    :param x_j: another interest point
+    :return: distance between x_i and x_j
+    """
+    diff_x = x_i.pt[0] - x_j.pt[0]
+    diff_y = x_i.pt[1] - x_j.pt[1]
+    return np.sqrt(diff_x * diff_x + diff_y * diff_y)
+
+
+def adaptive_suppression_within_r(suppression_radius_r,
+        anms_interest_points_list, interest_point_after_thresholding,
+        c_robust):
+    """
+    Suppress neighbor interest points within suppression radius
+
+    :param suppression_radius_r:                suppression radius
+    :param anms_interest_points_list:           interest points storing the interest point after adaptive suppression
+    :param interest_point_after_thresholding:   a list of interest points after thresholding on response
+    :param c_robust:                            c_robust parameter discussed in MOPS paper
+    """
+    for ip in interest_point_after_thresholding:
+
+        for suppress_ip in interest_point_after_thresholding:
+            if ip == suppress_ip:
+                continue
+
+            if dist(ip, suppress_ip) < suppression_radius_r[ip] and ip.response > c_robust * suppress_ip.response:
+                # suppress suppress_ip
+                suppress_ip.response = 0
+
+    # scan through interest_point_after_thresholding, add all
+    # non-zero-response interest points to anms_interest_points_list
+    for ip in interest_point_after_thresholding:
+        if ip.response > 0:
+            anms_interest_points_list.append(ip)
 
 
 def harris_corner_detection_ref(image_orig, threshold):
     """
     Harris Corner Detector using OpenCV library function directly. Show the
     interest points on the colored image
-    (Used for comparison with my Harris Corner Implementation)
+    (Only used for comparison with my Harris Corner Implementation)
 
     Reference:
     https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html#harris-corner-detector-in-opencv
@@ -101,9 +174,9 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
     """
     My Harris Corner Detection implementation
 
-    :param image_orig:              original colored image
-    :param threshold:               harris detection threshold
-    :param interest_points_list     records the positions of interest points
+    :param image_orig:                  original colored image
+    :param threshold:                   harris detection threshold
+    :param interest_points_list         records the positions of interest points
     """
     # convert the colored image to greyscale
     gray_image_orig = cv.cvtColor(image_orig, cv.COLOR_BGR2GRAY)
@@ -118,16 +191,17 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
     Iy = cv.Scharr(src=gray_image_orig, ddepth=cv.CV_32F, dx=0, dy=1)
 
     # show the gradients images
-    # gradient_x = cv.normalize(src=Ix, dst=None, alpha=0.0, beta=1.0,
-    #     norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
-    # gradient_y = cv.normalize(src=Iy, dst=None, alpha=0.0, beta=1.0,
-    #     norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
-    # cv.imshow('gradient x', gradient_x)
-    # cv.imshow('gradient y', gradient_y)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
+#     gradient_x = cv.normalize(src=Ix, dst=None, alpha=0.0, beta=1.0,
+#         norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
+#     gradient_y = cv.normalize(src=Iy, dst=None, alpha=0.0, beta=1.0,
+#         norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
+#     cv.imshow('gradient x', gradient_x)
+#     cv.imshow('gradient y', gradient_y)
+#     cv.waitKey(0)
+#     cv.destroyAllWindows()
 
     # Step 2: Compute the 3 elements in Harris Matrix H (formula in guideline)
+    ############## 1.1 computation of Harris matrix ##############
     Ix2 = np.multiply(Ix, Ix)
     Iy2 = np.multiply(Iy, Iy)
     IxIy = np.multiply(Ix, Iy)
@@ -152,7 +226,8 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
         print('gaussian_IxIy.shape =', gaussian_IxIy.shape) # same as gray_image_orig.shape
 
     # Step 3: Compute corner response function R for each pixel
-    # initialize the response matrix R
+    # initialize the height and width and the response matrix R
+    ############## 1.2 computation of response value ##############
     height = gray_image_orig.shape[0]
     width = gray_image_orig.shape[1]
     R = np.zeros((height, width), dtype=np.float32)
@@ -176,34 +251,79 @@ def harris_corner_detection(image_orig, threshold, interest_points_list):
                 # c[H] value in guideline
                 R[i, j] = det / trace
 
-    # Extra step: normalize R to 0 ~ 255 because value in R are so huge
+    # Extra step: normalize R to 0 ~ 255 because values in R may be huge
     # leading to large variation
     R_normalized = cv.normalize(src=R, dst=None, alpha=0.0, beta=255.0,
         norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
 
     # Step 4: Threshold R
+    ############## 1.3 identify interest points ##############
+    interest_point_after_thresholding = list()
     for i in range(height):
         for j in range(width):
             if R_normalized[i, j] <= threshold:
                 R_normalized[i, j] = 0
+            else:
+                # create a KeyPoint object and insert into the list
+                interest_point = cv.KeyPoint(x=j, y=i, _size=5, _angle=-1,
+                    _response=R_normalized[i, j])
+                interest_point_after_thresholding.append(interest_point)
 
     # Step 5: Find local maxima of response function for each pixel in 3x3
-    #         neighborhood (a.k.a non-maximum suppression)
-    for i in range(1, height - 1):
-        for j in range(1, width - 1):
-            if is_local_maxima(R_normalized, i, j, height, width):
-                # keep current response and suppress the neighborhood
-                suppress_neighborhood(R_normalized, i, j, height, width)
+    #         neighborhood (a.k.a adaptive non-maximum suppression)
+    anms = True  # anms identifier
+    if anms is True:
+        ############## 1.5 adaptive non-maximum suppression ##############
+        r = 24
+        c_robust = 0.9  # robust value
 
-                # record the interest point' position
-                # Attention: here is (j, i) not (i, j)!! because j is on
-                # x-axis, and i is on y-axis
-                interest_point = cv.KeyPoint(j, i, 5)
-                interest_point.response = R_normalized[i, j]  # set response
-                interest_points_list.append(interest_point)
+        # ANMS step 5.1) Find the global maximum
+        max_ip_response = 0.0
+        max_ip = None
+        for ip in interest_point_after_thresholding:
+            if ip.response > max_ip_response:
+                max_ip_response = ip.response
+                max_ip = ip
 
-                # print the interest point's position
-                # print('(%d, %d)' % (j, i))
-            else:
-                # keep neighborhood and suppress current response
-                R_normalized[i, j] = 0
+        # ANMS step 5.2) Append the global maximum ip to the anms list
+        interest_points_list.append(max_ip)
+
+        # ANMS step 5.3) Scan through all interest points again and compute the
+        #                r_i for each interest points
+        #   key:    interest point
+        #   value:  suppression radius
+        suppression_radius_dict = dict()
+        for x_i in interest_point_after_thresholding:
+            f_x_i = x_i.response
+            min_dist = r
+
+            for x_j in interest_point_after_thresholding:
+                if x_j == x_i:
+                    continue
+
+                f_x_j = x_j.response
+
+                if f_x_i < c_robust * f_x_j:
+                    # if the interest point's response < robust_response,
+                    # then we need to calculate the minimum suppression radius
+                    # r_i
+                    distance = dist(x_i, x_j)
+                    if distance < min_dist:
+                        min_dist = distance
+
+            r_i = min_dist
+
+            suppression_radius_dict[x_i] = r_i
+
+        # ANMS step 5.4) then apply non-maximum suppression within the r_i for
+        # each interest point
+        adaptive_suppression_within_r(suppression_radius_dict,
+            interest_points_list, interest_point_after_thresholding,
+            c_robust)
+    else:
+        ############## 1.4 non-maximum suppression ##############
+        # apply normal non-maximum suppression if we disable the
+        # adaptive suppression
+        non_maximum_suppression(R_normalized, height, width,
+            interest_point_after_thresholding, interest_points_list)
+
