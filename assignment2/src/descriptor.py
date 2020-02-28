@@ -23,8 +23,10 @@ class sift_descriptor:
 
             # magnitude and theta for each pixel in the 16x16 window
             self.magnitudes = np.zeros((16, 16), dtype=np.float32)
-            self.dominant_magnitude = 0
-            self.thetas = np.zeros((16, 16), dtype=np.float32)
+            self.thetas = np.zeros((16, 16), dtype=np.float32)  # unit: pi
+            self.angles = np.zeros((16, 16), dtype=np.float32)  # unit: degree
+            # dominant gradient orientation (theta) used for rotational
+            # invariant
             self.dominant_theta = 0
 
             # orientation histogram
@@ -58,10 +60,25 @@ class sift_descriptor:
                 self.magnitudes[i, j] = magnitude
 
                 # set theta
-                theta = (np.arctan2(diff_x, diff_y) + np.pi) * 180 / np.pi
+                theta = np.arctan2(diff_x, diff_y)
                 self.thetas[i, j] = theta
 
-                # set dominant_maginitude and dominant_theta
+                # set dominant_theta
+                if self.dominant_theta < theta:
+                    self.dominant_theta = theta
+
+        ############## 2.4 rotational invariant ##############
+        # for every theta in the 16x16 window, we subtract the dominant_theta
+        # to ensure rotational invariant
+        for i in range(16):
+            for j in range(16):
+                self.thetas[i, j] -= self.dominant_theta
+
+                angle = np.degrees(self.thetas[i, j])
+                if angle < 0:
+                    angle += 360
+
+                self.angles[i, j] = angle
 
 
     def set_orientation_histogram_for_grid_cells(self):
@@ -82,9 +99,9 @@ class sift_descriptor:
                         p_x = x + i
                         p_y = y + j
 
-                        ############## 2.4 rotational invariant ##############
+
                         # compute the vote for which bin
-                        vote = int(self.thetas[p_x, p_y] / 45)
+                        vote = int(self.angles[p_x, p_y] / 45)
                         if vote == 8:
                             # when descriptor.thetas[p_x, p_y] = 360, vote = 8
                             # the pixel votes for 7th bin
