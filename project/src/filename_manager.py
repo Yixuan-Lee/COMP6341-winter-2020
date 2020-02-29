@@ -10,6 +10,7 @@ class fname_manager:
         """
         self.harris_save_file_last_letter = ord('b')
         self.matching_save_file_last_letter = ord('b')
+        self.RANSAC_matching_save_file_last_letter = ord('b')
 
     def get_2_harris_output_filenames(self):
         """
@@ -33,4 +34,14 @@ class fname_manager:
         self.matching_save_file_last_letter += 1
 
         return matching_save_file_name
+
+    def get_RANSAC_matching_output_filename(self):
+        """
+        :return: return 1 file name for matching image after RANSAC
+        """
+        # set the filename
+        RANSAC_matching_save_file_name = '3' + chr(self.RANSAC_matching_save_file_last_letter) + '.png'
+        self.RANSAC_matching_save_file_last_letter += 1
+
+        return RANSAC_matching_save_file_name
 

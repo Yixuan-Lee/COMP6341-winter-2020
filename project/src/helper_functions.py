@@ -6,54 +6,6 @@ image_sets_folder = '../project_images'
 image_result_folder = '../result_images'
 
 
-def read_all_images():
-    """
-    load all images that are going to be stitched
-    (# is the stopping sign)
-
-    :return: a list of images
-    """
-
-    print('---- Enter all images\' paths (enter # as image path to end) ----')
-
-    image_list = list()
-    global image_path
-    image_path = ''
-    image_counter = 1
-
-    # read until hitting the stopping sign
-    while image_path != '#':
-
-        valid_path = False
-        # re-enter the image path if the path is invalid
-        while valid_path is False:
-            try:
-                # enter the image path
-                image_path = input('Enter the image path %d: '
-                                   % (image_counter))
-
-                # check if the input is stopping sign (#)
-                if image_path == '#':
-                    break
-
-                # concatenate the relative path
-                image_path = os.path.join(image_sets_folder, image_path)
-
-                # check if the image path is valid
-                image_path_check = os.path.isfile(image_path)
-
-                if image_path_check is True:
-                    image_list.append(cv.imread(image_path))
-                    valid_path = True
-                    image_counter += 1
-                else:
-                    raise IOError
-            except IOError:
-                print('invalid image path for image (%s)' % (image_path))
-
-    return image_list
-
-
 def read_threshold_harris():
     """
     read harris corner detection threshold
@@ -83,20 +35,20 @@ def read_ssd_threshold():
     :return: SSD distance threshold
     """
     valid = False
-    threshold = 0
+    ssd_threshold = 0
 
     while valid is False:
         try:
-            threshold = float(input('Enter the SSD distance threshold: '))
+            ssd_threshold = float(input('Enter the SSD distance threshold: '))
 
-            if isinstance(threshold, numbers.Number) is True:
+            if isinstance(ssd_threshold, numbers.Number) is True:
                 valid = True
 
         except ValueError:
             print('Message: SSD distance threshold should be number type!')
             continue
 
-    return threshold
+    return ssd_threshold
 
 
 def read_ratio_test_threshold():
@@ -109,7 +61,7 @@ def read_ratio_test_threshold():
 
     while valid is False:
         try:
-            ratio = float(input('Enter the ratio test: '))
+            ratio = float(input('Enter the ratio test threshold: '))
 
             if isinstance(ratio, numbers.Number) is True:
                 valid = True
@@ -119,6 +71,76 @@ def read_ratio_test_threshold():
             continue
 
     return ratio
+
+
+def read_inlier_threshold():
+    """
+    read inlier threshold
+    :return: inlier threshold
+    """
+    valid = False
+    inlier_threshold = 0
+
+    while valid is False:
+        try:
+            inlier_threshold = float(input('Enter the inlier threshold: '))
+
+            if isinstance(inlier_threshold, numbers.Number) is True:
+                valid = True
+
+        except ValueError:
+            print('Message: inlier threshold should be number type!')
+            continue
+
+    return inlier_threshold
+
+
+def read_no_of_iterations():
+    """
+    read number of iterations
+    :return: number of iteration of running RANSAC
+    """
+    valid = False
+    num_of_iterations = 0
+
+    while valid is False:
+        try:
+            num_of_iterations = int(input('Enter number of iterations of RANSAC: '))
+
+            if isinstance(num_of_iterations, numbers.Number) is True:
+                valid = True
+
+        except ValueError:
+            print('Message: inlier threshold should be number type!')
+            continue
+
+    return num_of_iterations
+
+
+def print_params_table(image_list, harris_threshold, ssd_threshold,
+        ratio_test_threshold, inlier_threshold, number_of_iterations):
+    """
+    print a table of parameters used in the program
+
+    :param image_list:
+    :param harris_threshold:
+    :param ssd_threshold:
+    :param ratio_test_threshold:
+    :param inlier_threshold:
+    :param number_of_iterations:
+    :return:
+    """
+    print('----------------------- Parameters Table -----------------------')
+    print('image_list = ', image_list.img_path_list)
+    print('Parameter used in Harris Corner: ')
+    print('\t harris corner threshold =', harris_threshold)
+    print('Parameters used in Feature Matching: ')
+    print('\t ssd distance            =', ssd_threshold)
+    print('\t ratio test threshold    =', ratio_test_threshold)
+    print('Parameters used in RANSAC: ')
+    print('\t inlier threshold        =', inlier_threshold)
+    print('\t number of iterations    =', number_of_iterations)
+    print('-----------------------------------------------------------------')
 
 
 def save_image(save_file_name, save_image):

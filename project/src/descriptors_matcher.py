@@ -94,6 +94,7 @@ class matcher:
                 self.interest_point_match_image_2.append(best_ip_2)
 
                 # append the match to the match list
+                # 2 indicates _imgIdx (required argument)
                 match = cv.DMatch(ip_match_idx, ip_match_idx, 2)
                 self.dmatch_list.append(match)
 

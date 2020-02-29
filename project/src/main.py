@@ -1,13 +1,17 @@
 import cv2 as cv
-from helper_functions import read_all_images
+from helper_functions import print_params_table
 from helper_functions import read_threshold_harris
 from helper_functions import save_image
 from helper_functions import read_ssd_threshold
 from helper_functions import read_ratio_test_threshold
+from helper_functions import read_inlier_threshold
+from helper_functions import read_no_of_iterations
+from my_images import my_image_list
 from harris_corner_detector import harris_corner
 from image_descriptors import descriptors
 from descriptors_matcher import matcher
 from filename_manager import fname_manager
+from homography_calculator import hom_calculator
 
 # store the stitched image
 stitched_image = None
@@ -17,17 +21,12 @@ name_manager = fname_manager()
 
 def main():
     # read all images
-    image_list = list()
-    while len(image_list) == 0:
-        image_list = read_all_images()
+    image_list = my_image_list()
+    while image_list.length() == 0:
+        image_list.read_all_images()
 
-        if len(image_list) == 0:
+        if image_list.length() == 0:
             print('you have to enter at least 1 image.')
-    # show all the reading images
-#     for image in image_list:
-#         cv.imshow('image', image)
-#         cv.waitKey(0)
-#         cv.destroyAllWindows()
 
     # read harris corner detection threshold
     harris_threshold = read_threshold_harris()
@@ -36,14 +35,22 @@ def main():
     ssd_threshold = read_ssd_threshold()
     ratio_test_threshold = read_ratio_test_threshold()
 
-    if len(image_list) == 1:
+    # read inlier threshold and number of iterations used to find homography
+    inlier_threshold = read_inlier_threshold()
+    number_of_iterations = read_no_of_iterations()
+
+    # print all used parameters table
+    print_params_table(image_list, harris_threshold, ssd_threshold,
+        ratio_test_threshold, inlier_threshold, number_of_iterations)
+
+    if image_list.length() == 1:
         # if program only inputs 1 image, then save an result image called
         # '1a.png' showing the Harris response of the image under the folder
         # 'result_images/', then program exits (due to no enough images to do
         # image stitching)
 
         # instantiate a harris_corner instance
-        harris = harris_corner(image_list[0])
+        harris = harris_corner(image_list.img_list[0])
 
         # do harris corner detection on the only 1 image
         harris.harris_corner_detection(harris_threshold)
@@ -79,15 +86,15 @@ def main():
         #
 
         ############################ Main Loop ############################
-        while len(image_list) > 0:
+        while image_list.length() > 0:
             if stitched_image == None:
                 # indicates this is the first time in the loop
-                image_1 = image_list.pop(0)     # index-0 image
-                image_2 = image_list.pop(0)     # index-1 image before popping
+                image_1 = image_list.img_list.pop(0)    # index-0 image
+                image_2 = image_list.img_list.pop(0)    # index-1 image before popping
             else:
                 # indicates this is NOT the first time in the loop
-                image_1 = stitched_image[0]     # previously stitched image
-                image_2 = image_list.pop(0)     # index-0 in image_list
+                image_1 = stitched_image                # previously stitched image
+                image_2 = image_list.img_list.pop(0)    # index-0 in image_list
 
             # ################# Step 1. Feature Detection ################# #
             print('-------------- Feature Detection --------------')
@@ -161,6 +168,7 @@ def main():
             # get the filename for saving matching image
             matching_save_file_name = name_manager.get_matching_output_filename()
             print('-------- Saving matching result to (%s) --------' % (matching_save_file_name))
+            print()
             save_image(matching_save_file_name, match_out)
             print('------------ Saving detected corners Done ------------')
             print()
@@ -171,9 +179,48 @@ def main():
             cv.waitKey(0)
             cv.destroyAllWindows()
 
-            # ################# Step 3.  ################# #
+            # ################# Step 3. Mosaic Stitching  ################# #
+            print('--------------- Running RANSAC ---------------')
+            print()
+            homography = hom_calculator(inlier_threshold,
+                number_of_iterations, matcher_1_2.dmatch_list,
+                matcher_1_2.interest_point_match_image_1,
+                matcher_1_2.interest_point_match_image_2)
+            best_hom_match_ip_image_1, best_hom_match_ip_image_2, best_hom_dmatch_list = homography.RANSAC(
+                matches=matcher_1_2.dmatch_list,
+                numIterations=number_of_iterations,
+                inlierThreshold=inlier_threshold
+            )
+            # this should only contain inliers (i.e. only good matches)
+            RANSAC_match_out = cv.drawMatches(
+                img1=image_1,
+                keypoints1=best_hom_match_ip_image_1,
+                img2=image_2,
+                keypoints2=best_hom_match_ip_image_2,
+                matches1to2=best_hom_dmatch_list,
+                outImg=None
+            )
+            print('------------ Running RANSAC Done ------------')
+            print()
 
-            # ################# Step 4.  ################# #
+            # get the filename for saving RANSAC matching
+            RANSAC_matching_save_file_name = name_manager.get_RANSAC_matching_output_filename()
+            print('-------- Saving matching result after RANSAC to (%s) --------' % (
+                RANSAC_matching_save_file_name))
+            print()
+            save_image(RANSAC_matching_save_file_name, RANSAC_match_out)
+            print('------------ Saving matching result after RANSAC Done ------------')
+            print()
+
+            print('---------- Drawing results of RANSAC ----------')
+            print()
+            cv.imshow('matches after RANSAC -> ' + RANSAC_matching_save_file_name, RANSAC_match_out)
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+            print('-------- Drawing results of RANSAC Done --------')
+            print()
+
+            # ################# Step 4. Image Stitching ################# #
 
 
 if __name__ == '__main__':
