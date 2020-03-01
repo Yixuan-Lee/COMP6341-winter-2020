@@ -1,6 +1,8 @@
 # Project README
 
+## 1. Implemented features
 
+Step 1 ~ 4 + mandatory extra 1
 
 
 ## 2. Input Examples
@@ -9,10 +11,15 @@
 | ----------------- | ----------------------- | ----------------------- | ----------------------- | ---------------------- | ----------------- | ------------------------- |
 | Harris Corner     | Boxes.png <br/> #       |            90           |           N/A           |          N/A           |          N/A      |          N/A              |
 | ALL               | Rainier1.png <br/> Rainier2.png <br/> #  |   80   |          1000           |          0.9           |          10       |          60               |
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> Rainier5.png <br/> Rainier6.png <br/> #|                      |                      |                   |                  |                   |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br/> # |  80  |  1000   |          0.8           |           4       |         150               | 
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> # |  80  |  1000  |  0.9  |           2       |         200               | 
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier5.png <br/> Rainier6.png <br/> # |  75  |  1200  |  0.9 |           1       |         300               | 
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> Rainier5.png <br/> Rainier6.png <br/> #|  75  | 1200 |  0.9  |  1  | 350  |
 |                   |                         |                         |                         |                      |                        |                        |  
 
 (**ALL** here means `Harris Corner + Matching + RANSAC + Stitching`)
+
+(TODO: 6 images still not overlap perfectly, need to tune the code and paramters)
 
 
 ## 3. Saving images filename convention
