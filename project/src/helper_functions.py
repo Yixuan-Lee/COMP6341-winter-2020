@@ -122,13 +122,12 @@ def print_params_table(image_list, harris_threshold, ssd_threshold,
     """
     print a table of parameters used in the program
 
-    :param image_list:
-    :param harris_threshold:
-    :param ssd_threshold:
-    :param ratio_test_threshold:
-    :param inlier_threshold:
-    :param number_of_iterations:
-    :return:
+    :param image_list:              all input images' paths
+    :param harris_threshold:        harrsi corner threshold
+    :param ssd_threshold:           ssd distance threshold
+    :param ratio_test_threshold:    ratio test threshold
+    :param inlier_threshold:        inlier threshold (epsilon)
+    :param number_of_iterations:    number of iterations of RANSAC
     """
     print('----------------------- Parameters Table -----------------------')
     print('image_list = ', image_list.img_path_list)
@@ -141,6 +140,7 @@ def print_params_table(image_list, harris_threshold, ssd_threshold,
     print('\t inlier threshold        =', inlier_threshold)
     print('\t number of iterations    =', number_of_iterations)
     print('-----------------------------------------------------------------')
+    print()
 
 
 def save_image(save_file_name, save_image):
