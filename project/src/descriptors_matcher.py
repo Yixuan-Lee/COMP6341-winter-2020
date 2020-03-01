@@ -53,14 +53,12 @@ class matcher:
         best_ip_2 = None
         ip_match_idx = 0
 
-        for ip_1, descriptor_1 in self.image_descriptors_1.\
-                interest_point_descriptor_dict.items():
+        for ip_1, descriptor_1 in self.image_descriptors_1.interest_point_descriptor_dict.items():
             best_ssd_dist = float('inf')
             second_best_ssd_dist = float('inf')
 
             # SSD distance
-            for ip_2, descriptor_2 in self.image_descriptors_2.\
-                    interest_point_descriptor_dict.items():
+            for ip_2, descriptor_2 in self.image_descriptors_2.interest_point_descriptor_dict.items():
                 # compute the SSD distance between 2 descriptors
                 ssd_dist = self.feature_distance(descriptor_1, descriptor_2)
 
@@ -69,6 +67,15 @@ class matcher:
                     continue
 
                 if ssd_dist < best_ssd_dist:
+                    # check if the 2 descriptors have already matched to other descriptors
+                    # this check avoids multiple descriptors match to the same descriptor
+                    # this optimizes the RANSAC algorithm, because if multiple descriptors match to the same descriptor
+                    # then, their matches tend to be inliers each other, but they actually should not be in fact!
+                    # so when we suppress the outliers during RANSAC, we tend to be error-prone and filter out 'outliers'
+                    # which actually should be inliers
+                    if descriptor_1.is_matched is True or descriptor_2.is_matched is True:
+                        continue
+
                     # set best -> second_best
                     second_best_ssd_dist = best_ssd_dist
 
@@ -97,5 +104,9 @@ class matcher:
                 # 2 indicates _imgIdx (required argument)
                 match = cv.DMatch(ip_match_idx, ip_match_idx, 2)
                 self.dmatch_list.append(match)
+
+                # set 2 interest points' descriptors as status 'matched' to avoid re-matched
+                self.image_descriptors_1.interest_point_descriptor_dict[best_ip_1].is_matched = True
+                self.image_descriptors_2.interest_point_descriptor_dict[best_ip_2].is_matched = True
 
                 ip_match_idx += 1

@@ -23,6 +23,7 @@ class sift:
             self.x = int(interest_point.pt[0])
             self.y = int(interest_point.pt[1])
             self.interest_point = interest_point
+            self.is_matched = False
 
             # surrounding 18x18 window of neighborhood
             # the reason why here is not 16x16 is because when calculating
