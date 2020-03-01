@@ -40,7 +40,7 @@ class hom_calculator:
 
         :param x1: x value in image 1's point
         :param y1: y value in image 1's point
-        :param H:  self.homography
+        :param H:  homography
         :param x2: projected x value in image 2's point (doesn't use)
         :param y2: projected y value in image 2's point (doesn't use)
         :return: (x2, y2)

@@ -12,6 +12,7 @@ from image_descriptors import descriptors
 from descriptors_matcher import matcher
 from filename_manager import fname_manager
 from homography_calculator import hom_calculator
+from image_blender import image_stitch
 
 # store the stitched image
 stitched_image = None
@@ -182,10 +183,12 @@ def main():
             # ################# Step 3. Mosaic Stitching  ################# #
             print('--------------- Running RANSAC ---------------')
             print()
+            # instantiate a RANSAC instance
             homography = hom_calculator(inlier_threshold,
                 number_of_iterations, matcher_1_2.dmatch_list,
                 matcher_1_2.interest_point_match_image_1,
                 matcher_1_2.interest_point_match_image_2)
+            # compute the best homography and reserve all good matches
             best_hom_match_ip_image_1, best_hom_match_ip_image_2, best_hom_dmatch_list = homography.RANSAC(
                 matches=matcher_1_2.dmatch_list,
                 numIterations=number_of_iterations,
@@ -205,8 +208,7 @@ def main():
 
             # get the filename for saving RANSAC matching
             RANSAC_matching_save_file_name = name_manager.get_RANSAC_matching_output_filename()
-            print('-------- Saving matching result after RANSAC to (%s) --------' % (
-                RANSAC_matching_save_file_name))
+            print('-------- Saving matching result after RANSAC to (%s) --------' % (RANSAC_matching_save_file_name))
             print()
             save_image(RANSAC_matching_save_file_name, RANSAC_match_out)
             print('------------ Saving matching result after RANSAC Done ------------')
@@ -221,6 +223,33 @@ def main():
             print()
 
             # ################# Step 4. Image Stitching ################# #
+            print('--------------- Blending 2 images ---------------')
+            print()
+            # instantiate an image blender instance
+            blender = image_stitch(image_1, image_2, homography)
+        #     print(image_2.shape)    # (# of rows, # of columns, # of channels)
+            # blend 2 images
+            stitched = blender.stitch(image_1, image_2)
+            print('------------- Blending 2 images Done -------------')
+            print()
+
+            # get the filename for saving stitched image
+            stitched_image_save_file_name = name_manager.get_image_stitch_output_filename()
+            print('---------- Saving stitched image to (%s) ----------' % (stitched_image_save_file_name))
+            print()
+            save_image(stitched_image_save_file_name, stitched)
+            print('------------ Saving stitched image Done ------------')
+            print()
+
+            print('--------- Drawing result after image stitching ---------')
+            print()
+            cv.imshow('stitched image -> ' + stitched_image_save_file_name, stitched)
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+            print('------- Drawing result after image stitching Done -------')
+            print()
+
+            break
 
 
 if __name__ == '__main__':
