@@ -153,6 +153,14 @@ class image_stitch:
                     # but not within image1's boundaries, then we just copy the image2's pixel B/G/R values
                     # from self.image_2 -> blended_stitchedImage
                     blended_stitchedImage[i, j, :] = self.image_2[y_val_in_image_2, x_val_in_image_2, :]
+                elif is_in_image_2 and is_in_image_1 and self.isPurelyBlackInImage1(x_val_in_stitchedImage, y_val_in_stitchedImage):
+                    # here's a little *tricky*, I only blend 2 pixels when the pixel in image_1 is NOT purely black pixel
+                    # Reason: because of extended black pixels in the previously stitched image, I may blend the black
+                    #         pixel in the last-time stitched image with the pixel in image 2 (which is not reasonable)
+                    # if the pixel (x_val_in_stitchedImage, y_val_in_stitchedImage) is purely black, and the pixel lies within
+                    # image1's boundaries and image2's boundaries, then copy the pixel in image 2 to blended_stitchedImage
+                    # to avoid blending the extended pixel in the last stitched image with the pixel in image 2
+                    blended_stitchedImage[i, j, :] = self.image_2[y_val_in_image_2, x_val_in_image_2, :]
                 elif is_in_image_2 and is_in_image_1:
                     # A.c.ii. if it lies within the intersection of image2' boundaries and image1' boundaries, then
                     # add or blend the pixel's value to stitchedImage
@@ -204,4 +212,19 @@ class image_stitch:
             return True
 
         return False
+
+    def isPurelyBlackInImage1(self, x, y):
+        """
+        check if (x, y) is purely black pixel in image 1
+
+        :param x: x coordinate
+        :param y: y coordinate
+        :return: true if self.image_1[x, y, :] is (0, 0, 0), false otherwise
+        """
+        pixel_b_g_r = self.image_1[y, x, :]
+        for intensity in pixel_b_g_r:
+            if intensity != 0:
+                return False
+
+        return True
 
