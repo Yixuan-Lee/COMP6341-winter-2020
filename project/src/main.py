@@ -22,6 +22,7 @@ name_manager = fname_manager()
 
 def main():
     # read all images
+    global stitched_image
     image_list = my_image_list()
     while image_list.length() == 0:
         image_list.read_all_images()
@@ -88,7 +89,7 @@ def main():
 
         ############################ Main Loop ############################
         while image_list.length() > 0:
-            if stitched_image == None:
+            if stitched_image is None:
                 # indicates this is the first time in the loop
                 image_1 = image_list.img_list.pop(0)    # index-0 image
                 image_2 = image_list.img_list.pop(0)    # index-1 image before popping
@@ -227,7 +228,6 @@ def main():
             print()
             # instantiate an image blender instance
             blender = image_stitch(image_1, image_2, homography)
-        #     print(image_2.shape)    # (# of rows, # of columns, # of channels)
             # blend 2 images
             stitched = blender.stitch(image_1, image_2)
             print('------------- Blending 2 images Done -------------')
@@ -249,7 +249,8 @@ def main():
             print('------- Drawing result after image stitching Done -------')
             print()
 
-            break
+            # set stitched_image
+            stitched_image = stitched
 
 
 if __name__ == '__main__':
