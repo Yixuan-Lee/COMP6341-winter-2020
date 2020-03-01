@@ -49,6 +49,11 @@ class hom_calculator:
         numerator_x2 = H[0, 0] * x1 + H[0, 1] * y1 + H[0, 2] * 1
         numerator_y2 = H[1, 0] * x1 + H[1, 1] * y1 + H[1, 2] * 1
 
+        if denominator == 0:
+            # if denominator is exactly 0, then add a small epsilon to avoid
+            # divide by 0
+            denominator += 0.001
+
         x2 = numerator_x2 / denominator
         y2 = numerator_y2 / denominator
 
