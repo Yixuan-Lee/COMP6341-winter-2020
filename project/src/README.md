@@ -7,14 +7,14 @@ Step 1 ~ 4 + mandatory extra 1
 
 ## 2. Input Examples
 
-|  Testing Purpose  |    images paths input   | Harris Corner threshold |      SSD threshold      |  ratio test threshold  | inlier threshold  | # of iterations of RANSAC |
-| ----------------- | ----------------------- | ----------------------- | ----------------------- | ---------------------- | ----------------- | ------------------------- |
-| Harris Corner     | Boxes.png <br/> #       |            90           |           N/A           |          N/A           |          N/A      |          N/A              |
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> #  |   80   |          1000           |          0.9           |          10       |          60               |
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br/> # |  80  |  1000   |          0.8           |           4       |         150               | 
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> # |  80  |  1000  |  0.9  |           2       |         200               | 
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier5.png <br/> Rainier6.png <br/> # |  75  |  1200  |  0.9 |           1       |         300               | 
-| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> Rainier5.png <br/> Rainier6.png <br/> #|  75  | 1200 |  0.9  |  1  | 350  |
+|  Testing Purpose  |    images paths input   | Harris Corner threshold |      SSD threshold      |  ratio test threshold  | inlier threshold  | # of iterations of RANSAC | contains mis-alignment |
+| ----------------- | ----------------------- | ----------------------- | ----------------------- | ---------------------- | ----------------- | ------------------------- | ---------------------- |
+| Harris Corner     | Boxes.png <br/> #       |            90           |            0            |            0           |           0       |           0               | Perfect                |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> #  |   80   |         1000            |          0.9           |          10       |          60               | Perfect                |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br/> # |  80  |  1000   |          0.8           |           4       |         150               | Perfect                |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> # |  75  |  1200  |  0.9  |           3       |         300               | Slight mis-alignment   |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier5.png <br/> Rainier6.png <br/> # |  75  |  1200  |  0.9 |           1       |         300               | Slight mis-alignment   |
+| ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> Rainier5.png <br/> Rainier6.png <br/> #|  75  | 1200 |  0.9  |  1  | 350  | Slight mis-alignment   |
 |                   |                         |                         |                         |                      |                        |                        |  
 
 (**ALL** here means `Harris Corner + Matching + RANSAC + Stitching`)
@@ -39,3 +39,5 @@ Step 1 ~ 4 + mandatory extra 1
 5. [numpy.linalg.pinv (doc)](https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.pinv.html)
 
 6. [cv.getRectSubPix (doc)](https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html#getrectsubpix)
+
+7. [delete the contents of a folder](https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder)
