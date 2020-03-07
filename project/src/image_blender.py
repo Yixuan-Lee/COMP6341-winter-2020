@@ -28,7 +28,7 @@ class image_stitch:
         :return: stitched image
         """
         # A.a. Compute the size of stitched image
-        # A.a.i. get the 4 corners of image 2
+        # A.a.i. get the 4 corners in image 2
         # image2.shape = (# of rows, # of columns, # of channels)
         max_rows_2, max_columns_2, _ = image2.shape # omit the 3rd parameter (which is # of channels)
         # left top (0, 0)
@@ -74,8 +74,8 @@ class image_stitch:
         # initialized stitchedImage
         stitched = np.zeros((int(y_max - y_min), int(x_max - x_min), 3), dtype=np.float32)
         # copy image1 onto the stitchedImage
-        x_offset = int(0 - x_min)
-        y_offset = int(0 - y_min)
+        x_offset = int(0 - x_min)   # offset on y axis (vertically)
+        y_offset = int(0 - y_min)   # offset on x axis (horizontally
         stitchedImage_1 = self.copyImageOne(x_offset, y_offset, stitched)
 
         # A.c. For each pixel in stitchedImage, project the point onto
@@ -106,14 +106,14 @@ class image_stitch:
         """
         copy image 1 pixels onto the stitchedImage
 
-        :param x_offset:        x offset
-        :param y_offset:        y offset
+        :param x_offset:        vertical offset   (on y axis)
+        :param y_offset:        horizontal offset (on x axis)
         :param stitchedImage:   stitched image
         """
         max_rows, max_columns, _ = self.image_1.shape
 
-        for i in range(max_rows):           # i -> y
-            for j in range(max_columns):    # j -> x
+        for i in range(max_rows):           # i -> y axis
+            for j in range(max_columns):    # j -> x axis
                 stitchedImage[i + y_offset, j + x_offset, :] = self.image_1[i, j, :]
 
         return stitchedImage
@@ -122,8 +122,8 @@ class image_stitch:
         """
         copy image 2 pixels onto the stitchedImage
 
-        :param x_offset:        x offset
-        :param y_offset:        y offset
+        :param x_offset:        vertical offset   (on y axis)
+        :param y_offset:        horizontal offset (on x axis)
         :param stitchedImage:   stitched image
         :return numpy array of blended stitched image
         """
@@ -131,8 +131,8 @@ class image_stitch:
         #        image2
         max_rows, max_columns, _ = stitchedImage.shape
         blended_stitchedImage = np.empty(stitchedImage.shape, dtype=np.float32)
-        for i in range(max_rows):           # i -> y
-            for j in range(max_columns):    # j -> x
+        for i in range(max_rows):           # i -> y axis
+            for j in range(max_columns):    # j -> x axis
                 # relative coordinates to image 1 index in stitched image
                 x_val_in_stitchedImage = j - x_offset
                 y_val_in_stitchedImage = i - y_offset
@@ -149,7 +149,7 @@ class image_stitch:
                 is_in_image_2 = self.isInImage2(x_val_in_image_2, y_val_in_image_2)
 
                 if is_in_image_2 and not is_in_image_1:
-                    # if (x_val_in_stitchedImage, y_val_in_stitchedImage) lies within image2's boundaries
+                    # if projected (x_val_in_stitchedImage, y_val_in_stitchedImage) lies within image2's boundaries
                     # but not within image1's boundaries, then we just copy the image2's pixel B/G/R values
                     # from self.image_2 -> blended_stitchedImage
                     blended_stitchedImage[i, j, :] = self.image_2[y_val_in_image_2, x_val_in_image_2, :]
@@ -162,17 +162,16 @@ class image_stitch:
                     # to avoid blending the extended pixel in the last stitched image with the pixel in image 2
                     blended_stitchedImage[i, j, :] = self.image_2[y_val_in_image_2, x_val_in_image_2, :]
                 elif is_in_image_2 and is_in_image_1:
-                    # A.c.ii. if it lies within the intersection of image2' boundaries and image1' boundaries, then
-                    # add or blend the pixel's value to stitchedImage
+                    # A.c.ii. if it lies within the intersection of image2' boundaries and image1' boundaries, and image1' pixel is
+                    # NOT the extended black pixel, then add or blend the pixel's value to stitchedImage
                     # Here, I applied alpha blending between the pixel stitchedImage[i, j, :] and
                     # self.image_2[x_val_in_image_2, y_val_in_image_2, :] with equal weights
                     alpha_stitched = 0.5
                     alpha_image2 = 0.5
-
                     # blend the pixel on blue/green/red (formulas on page 17, slide lecture 9: Image Stitching II)
                     blended_stitchedImage[i, j, :] = (alpha_stitched * stitchedImage[i, j, :] + alpha_image2 * self.image_2[y_val_in_image_2, x_val_in_image_2, :]) / (alpha_stitched + alpha_image2)
                 elif is_in_image_1 and not is_in_image_2:
-                    # if (x_val_in_stitchedImage, y_val_in_stitchedImage) lies within image1's boundaries
+                    # if projected (x_val_in_stitchedImage, y_val_in_stitchedImage) lies within image1's boundaries
                     # but not within image2's boundaries, then copy the stitchedImage -> blended_stitchedImage
                     blended_stitchedImage[i, j, :] = stitchedImage[i, j, :]
                 else:

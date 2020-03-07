@@ -2,10 +2,11 @@ import numpy as np
 import random
 import cv2 as cv
 
+
 class hom_calculator:
 
     def __init__(self, inlierThreshold, numIterations, dmatch_list,
-        interest_point_match_image_1, interest_point_match_image_2):
+            interest_point_match_image_1, interest_point_match_image_2):
         """
         constructor
 
@@ -15,10 +16,10 @@ class hom_calculator:
         :param interest_point_match_image_1: interest point matching list in image 1
         :param interest_point_match_image_2: interest point matching list in image 2
         """
-        # set threshold
+        # set threshold  (epsilon in slide page 155)
         self.inlierThreshold = inlierThreshold
 
-        # set iterations (epsilon in slide page 155)
+        # set iterations
         self.numIterations = numIterations
 
         # set matching points
@@ -110,7 +111,7 @@ class hom_calculator:
         dmatch_index = 0
 
         for i in range(self.numMatches):
-            # src: (x1, y1) in image 1
+            # src:    (x1, y1) in image 1
             # target: (x2, y2) in image 2
             x1, y1 = self.interest_point_match_image_1[i].pt
             x2, y2 = self.interest_point_match_image_2[i].pt
@@ -203,7 +204,7 @@ class hom_calculator:
         # set inverse of best homography
         # Attention: here should be pseudo-inverse!
         #            there are 2 ways to calculate inverse matrix:
-        #               1. np.linalg.inv: real inverse
+        #               1. np.linalg.inv:  real inverse
         #               2. np.linalg.pinv: pseudo inverse
 #        self.homographyInv = np.linalg.inv(best_homography)
         self.homographyInv = np.linalg.pinv(best_homography)

@@ -24,7 +24,7 @@ class descriptors:
 
         # initialize a dictionary of interest_point -> descriptor
         #       key: interest point
-        #       value: sift_descriptor
+        #       value: sift_descriptor of the interest point
         self.interest_point_descriptor_dict = dict()
 
         # initialize the image

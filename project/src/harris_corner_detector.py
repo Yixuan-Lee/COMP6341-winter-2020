@@ -97,16 +97,16 @@ class harris_corner:
         :param interest_point_after_thresholding: list of interest points before non-maximum suppression
         """
         for ip in interest_point_after_thresholding:
-            x = int(ip.pt[0])   # x -> width
-            y = int(ip.pt[1])   # y -> height
+            x = int(ip.pt[0])   # x -> width  (float->int)
+            y = int(ip.pt[1])   # y -> height (float->int)
 
             if self.is_local_maxima(y, x):
                 # keep current response and suppress the neighborhood
                 self.suppress_neighborhood(y, x)
 
                 # record the interest point' position
-                # Attention: here is (j, i) not (i, j)!! because j is on
-                # x-axis, and i is on y-axis
+                # Attention: here is (y, x) not (x, y)!! because y is on
+                # x-axis, and x is on y-axis
                 interest_point = cv.KeyPoint(x=x, y=y, _size=5, _angle=-1)
                 interest_point.response = self.R_normalized[y, x]  # set response
                 self.interest_points_list.append(interest_point)

@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 import numbers
+import shutil
 
 image_sets_folder = '../project_images'
 image_result_folder = '../result_images'
@@ -153,3 +154,21 @@ def save_image(save_file_name, save_image):
     cv.imwrite(filename=save_path, img=save_image)
 
 
+def delete_all_previous_result_images():
+    """
+    delete all previously resulting images under '../result_images/'
+    """
+    for filename in os.listdir(image_result_folder):
+        file_path = os.path.join(image_result_folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                # delete the file
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                # delete the folder
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete &s. Reason: %s' % (file_path, e))
+
+    print('-------------- Empty the result folder --------------')
+    print()

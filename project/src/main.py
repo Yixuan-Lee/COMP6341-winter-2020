@@ -1,5 +1,6 @@
 import cv2 as cv
 from helper_functions import print_params_table
+from helper_functions import delete_all_previous_result_images
 from helper_functions import read_threshold_harris
 from helper_functions import save_image
 from helper_functions import read_ssd_threshold
@@ -45,6 +46,9 @@ def main():
     print_params_table(image_list, harris_threshold, ssd_threshold,
         ratio_test_threshold, inlier_threshold, number_of_iterations)
 
+    # delete all previous resulting images under '../result_images' folder
+    delete_all_previous_result_images()
+
     if image_list.length() == 1:
         # if program only inputs 1 image, then save an result image called
         # '1a.png' showing the Harris response of the image under the folder
@@ -60,9 +64,11 @@ def main():
         # save the harris response to 1a.png under the folder 'result_images/'
         # then show the image
         print('------- Saved Harris Response to 1a.png -------')
+        print()
         save_image('1a.png', harris.R_normalized)
 
         print('------- Showing result_images/1a.png -------')
+        print()
         cv.imshow('Harris response --> 1a.png', harris.R_normalized)
         cv.waitKey(0)
         cv.destroyAllWindows()
@@ -70,7 +76,7 @@ def main():
     else:
         # if program inputs more than 1 image, then
         #
-        # step 1: save result images of the detected corners of all images.
+        # step 1: save result images of the detected corners of all images
         #         called '1b.png', '1c.png', '1d.png', ... under the folder
         #         '../result_images/'
         #
@@ -79,11 +85,12 @@ def main():
         #         called '2b.png', '2c.png', '2d.png', ... under the folder
         #         '../result_images/'
         #
-        # step 3: save the images after RANSAC (should only contain inliers)
-        #         '3b.png', '3c.png', '3d.png', ... under the folder
-        #         '../result_images/'
+        # step 3: save the matching images after RANSAC (should only contain
+        #         inlier matches) called '3b.png', '3c.png', '3d.png', ...
+        #         under the folder '../result_images/'
+        #         ('3b.png' corresponds to '2b.png', etc.)
         #
-        # step 4: save the stitched image as '4a.png', '4b.png', ... under
+        # step 4: save the stitched image as '4b.png', '4c.png', ... under
         #         the folder '../result_images/'
         #
 
@@ -92,7 +99,7 @@ def main():
             if stitched_image is None:
                 # indicates this is the first time in the loop
                 image_1 = image_list.img_list.pop(0)    # index-0 image
-                image_2 = image_list.img_list.pop(0)    # index-1 image before popping
+                image_2 = image_list.img_list.pop(0)    # index-1 image before popping above
             else:
                 # indicates this is NOT the first time in the loop
                 image_1 = stitched_image                # previously stitched image
