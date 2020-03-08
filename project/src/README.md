@@ -2,7 +2,7 @@
 
 ## 1. Implemented features
 
-Step 1 ~ 4 + mandatory extra 1
+Step 1 ~ 4 + mandatory extra 1 + 2
 
 
 ## 2. Input Examples
@@ -15,7 +15,8 @@ Step 1 ~ 4 + mandatory extra 1
 | ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> # |  75  |  1200  |  0.9  |           3       |         300               | Slight mis-alignment   |
 | ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier5.png <br/> Rainier6.png <br/> # |  75  |  1200  |  0.9 |           1       |         300               | Slight mis-alignment   |
 | ALL               | Rainier1.png <br/> Rainier2.png <br/> Rainier3.png <br> Rainier4.png <br/> Rainier5.png <br/> Rainier6.png <br/> #|  75  | 1200 |  0.9  |  1  | 350  | Slight mis-alignment   |
-|                   |                         |                         |                         |                      |                        |                        |  
+| ALL               | my_images/ev1.png <br/> my_images/ev2.png <br/> my_images/ev3.png <br/> # | 60  |  1500  |  0.9      |           4       |         300               | Perfect                |
+| ALL               | my_images/ev1.png <br/> my_images/ev2.png <br/> my_images/ev3.png <br/> my_images/ev4.png <br/> my_images/ev5.png <br/> # |  60  |  1500  |  0.9  |  4  |  300  | Perfect     |
 
 (**ALL** here means `Harris Corner + Matching + RANSAC + Stitching`)
 
