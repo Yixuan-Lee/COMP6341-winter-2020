@@ -50,9 +50,9 @@ def main():
     delete_all_previous_result_images()
 
     if image_list.length() == 1:
-        # if program only inputs 1 image, then save an result image called
+        # if the program only inputs 1 image, then save an result image called
         # '1a.png' showing the Harris response of the image under the folder
-        # 'result_images/', then program exits (due to no enough images to do
+        # 'result_images/', then program exits (due to no enough image to do
         # image stitching)
 
         # instantiate a harris_corner instance

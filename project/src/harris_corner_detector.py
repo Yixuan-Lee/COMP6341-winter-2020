@@ -26,8 +26,7 @@ class harris_corner:
 
         # initialize the response matrix R and R_normalized
         self.R = np.zeros((self.height, self.width), dtype=np.float32)
-        self.R_normalized = np.zeros((self.height, self.width),
-            dtype=np.float32)
+        self.R_normalized = np.zeros((self.height, self.width), dtype=np.float32)
 
         # initialize the interest point list
         # the list stores interest points after anms or nms

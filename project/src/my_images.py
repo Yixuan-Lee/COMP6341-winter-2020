@@ -7,7 +7,7 @@ image_result_folder = '../result_images'
 
 """
 this class is created for print_params_table(.) function in 
-helper_functions.py, because after append cv.imread(image_path) object here, 
+helper_functions.py, because after appending cv.imread(image_path) object, 
 I didn't find a way to present the object's image filename. So I create this
 class for the convenience of presenting the image filename in 
 print_params_table(.) function
@@ -35,6 +35,7 @@ class my_image_list:
         while image_path != '#':
 
             valid_path = False
+
             # re-enter the image path if the path is invalid
             while valid_path is False:
                 try:
