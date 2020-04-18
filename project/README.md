@@ -20,11 +20,8 @@ Step 1 ~ 4 + mandatory extra 1 + 2
 
 (**ALL** here means `Harris Corner + Matching + RANSAC + Stitching`)
 
-(TODO: 6 images still not overlap perfectly, need to tune the code and paramters)
 
-
-## 3. Saving images filename convention
-
+## More details see Project_report.pdf
 
 
 # References
