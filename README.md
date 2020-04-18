@@ -9,5 +9,5 @@ COMP 6341 Computer Vision Laboratory, Programming Assignments and Project
 | --------------- |:--------------------------------------------------------:|:------------------:| --------:|
 | Assignment 1    | Demosaicing (Bayer -> RGB)                               | submitted on EAS   | Yes      |
 | Assignment 2    | Feature Detection, Feature Description, Feature Matching | Submitted on EAS   | Yes      |
-| Project         | Panorama - Assignment 2 + Mosaic Stitching (RANSAC+blending) | **Due date: 24 March** | No       |
+| Project         | Panorama - Assignment 2 + Mosaic Stitching (RANSAC+blending) | submitted on EAS | No demo, write report  |
 
